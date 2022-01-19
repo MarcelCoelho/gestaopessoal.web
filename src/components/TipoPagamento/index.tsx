@@ -10,7 +10,9 @@ export function TipoPagamento() {
   const { 
     handleOpenNewTransactionModal,
     handleOpenTransaction,
+    handleOpenNewFaturaModal,
     handleOpenFatura, 
+    handleOpenNewTipoPagamentoModal,
     handleOpenTipoPagamento} = usePrincipal();
 
   return (
@@ -18,11 +20,15 @@ export function TipoPagamento() {
       <Header 
             onOpenNewTransactionModal={handleOpenNewTransactionModal}
             onOpenTransaction={handleOpenTransaction}
+            onOpenNewFatura={handleOpenNewFaturaModal}
             onOpenFatura={handleOpenFatura}
+            onOpenNewTipoPagamento={handleOpenNewTipoPagamentoModal}
             onOpenTipoPagamento={handleOpenTipoPagamento}
             showButtonNewTransaction={false}
             showButtonTransacction={true} 
+            showButtonNewFatura={false}
             showButtonFatura={true} 
+            showButtonNewTipoPagamento={true}
             showButtonTipoPagamento={false} 
           />
       <Container>

@@ -10,13 +10,15 @@ export const Content = styled.div`
   margin: 0 auto;
 
   padding: 2rem 1rem 12rem;
-  display: flex;
+
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-gap: 1rem;
 
   align-items: center;
-  justify-content: space-between;
 
   button {
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: #fff;
     background: var(--blue-light);
     border: 0;
@@ -35,13 +37,14 @@ export const Content = styled.div`
 export const LinkButton = styled(Link)`
     text-decoration: none;
 
-    font-size: 1rem;
+    font-size: 0.8rem;
     color: #fff;
     background: var(--blue-light);
     border: 0;
-    padding: 0 2rem;
+    padding: 0 0.4rem;
     border-radius: 0.25rem;
     height: 3rem;
 
     transition: filter 0.2s;
+    
 `;

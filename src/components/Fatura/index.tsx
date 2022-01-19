@@ -11,7 +11,9 @@ export function Fatura() {
   const { 
     handleOpenNewTransactionModal,
     handleOpenTransaction,
+    handleOpenNewFaturaModal,
     handleOpenFatura, 
+    handleOpenNewTipoPagamentoModal,
     handleOpenTipoPagamento} = usePrincipal();
 
   return (
@@ -19,11 +21,15 @@ export function Fatura() {
       <Header 
             onOpenNewTransactionModal={handleOpenNewTransactionModal}
             onOpenTransaction={handleOpenTransaction}
+            onOpenNewFatura={handleOpenNewFaturaModal}
             onOpenFatura={handleOpenFatura}
+            onOpenNewTipoPagamento={handleOpenNewTipoPagamentoModal}
             onOpenTipoPagamento={handleOpenTipoPagamento}
             showButtonNewTransaction={false}
             showButtonTransacction={true} 
+            showButtonNewFatura={true}
             showButtonFatura={false} 
+            showButtonNewTipoPagamento={false}
             showButtonTipoPagamento={true} 
           />
       <Container>

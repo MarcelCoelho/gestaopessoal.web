@@ -13,11 +13,17 @@ import {
     handleOpenNewTransactionModal: () => void;
     handleCloseNewTransactionModal: () => void;
     handleOpenTransaction: () => void;
+    handleOpenNewFaturaModal: () => void;
+    handleCloseNewFaturaModal: () => void;
     handleOpenFatura: () => void;
+    handleOpenNewTipoPagamentoModal: () => void;
+    handleCloseNewTipoPagamentoModal: () => void;
     handleOpenTipoPagamento: () => void;
     isNewTransactionModalOpen: boolean;
     isOpenTransaction: boolean;
+    isNewFaturaModalOpen: boolean;
     isOpenFautra: boolean;
+    isNewTipoPagamentoModalOpen: boolean;
     isOpenTipoPagamento: boolean;
   }
   
@@ -27,9 +33,9 @@ import {
   
   export function PrincipalProvider({ children }: PrincipalProviderProps) { 
     
-    const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(
-        false
-      );
+    const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
+    const [isNewFaturaModalOpen, setIsNewFaturaModalOpen] = useState(false);
+    const [isNewTipoPagamentoModalOpen, setIsNewTipoPagamentoModalOpen] = useState(false);
     
       const [isOpenTransaction, setOpenTransaction] = useState(false);
       const [isOpenFautra, setOpenFatura] = useState(false);
@@ -38,31 +44,47 @@ import {
       function handleOpenNewTransactionModal() {
         setIsNewTransactionModalOpen(true);
       }
-    
+
       function handleCloseNewTransactionModal() {
         setIsNewTransactionModalOpen(false);
       }
+
+      function handleOpenNewFaturaModal() {
+        setIsNewFaturaModalOpen(true);
+      }
+
+      function handleCloseNewFaturaModal() {
+        setIsNewFaturaModalOpen(false);
+      }
+
+      function handleOpenNewTipoPagamentoModal() {
+        setIsNewTipoPagamentoModalOpen(true);
+      }
     
-    function handleOpenTransaction() {
+      function handleCloseNewTipoPagamentoModal() {
+        setIsNewTipoPagamentoModalOpen(false);
+      }
+    
+      function handleOpenTransaction() {
         setOpenTransaction(false);
         setOpenFatura(true);
         setOpenTipoPagamento(true);
-        setIsNewTransactionModalOpen(true);
+        setIsNewTransactionModalOpen(false);
       }
 
-    function handleOpenFatura() {
+      function handleOpenFatura() {
       setOpenTransaction(true);
       setOpenFatura(false);
       setOpenTipoPagamento(true);
       setIsNewTransactionModalOpen(false);
-    }
+      }
     
-    function handleOpenTipoPagamento() {
+      function handleOpenTipoPagamento() {
       setOpenTransaction(true);
       setOpenFatura(true);
       setOpenTipoPagamento(false);
       setIsNewTransactionModalOpen(false);
-    }
+      }
   
     return (
       <PrincipalContext.Provider
@@ -70,11 +92,17 @@ import {
             handleOpenNewTransactionModal,
             handleCloseNewTransactionModal,
             handleOpenTransaction,
+            handleOpenNewFaturaModal,
+            handleCloseNewFaturaModal,
             handleOpenFatura,
+            handleOpenNewTipoPagamentoModal,
+            handleCloseNewTipoPagamentoModal,
             handleOpenTipoPagamento,
             isNewTransactionModalOpen,
             isOpenTransaction,
+            isNewFaturaModalOpen,
             isOpenFautra,
+            isNewTipoPagamentoModalOpen,
             isOpenTipoPagamento,
         }}
       >

@@ -15,8 +15,10 @@ export function Transactions() {
     handleOpenNewTransactionModal,
     handleCloseNewTransactionModal,
     handleOpenTransaction,
+    handleOpenNewFaturaModal,
     handleOpenFatura, 
-    handleOpenTipoPagamento, 
+    handleOpenNewTipoPagamentoModal,
+    handleOpenTipoPagamento,
     isNewTransactionModalOpen} = usePrincipal();
 
   return (
@@ -24,11 +26,15 @@ export function Transactions() {
       <Header 
             onOpenNewTransactionModal={handleOpenNewTransactionModal}
             onOpenTransaction={handleOpenTransaction}
+            onOpenNewFatura={handleOpenNewFaturaModal}
             onOpenFatura={handleOpenFatura}
+            onOpenNewTipoPagamento={handleOpenNewTipoPagamentoModal}
             onOpenTipoPagamento={handleOpenTipoPagamento}
             showButtonNewTransaction={true}
             showButtonTransacction={false} 
+            showButtonNewFatura={false}
             showButtonFatura={true} 
+            showButtonNewTipoPagamento={false}
             showButtonTipoPagamento={true} 
           />
       <Container>
