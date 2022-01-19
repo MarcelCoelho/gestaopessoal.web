@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { createServer, Model } from "miragejs";
+//import { createServer, Model } from "miragejs";
 
 import { App } from "./App";
 
-createServer({
+/*createServer({
   models: {
     transaction: Model,
   },
@@ -30,7 +30,7 @@ createServer({
           category: "Food",
           createAt: Date,
         },
-      ];*/
+      ];
     });
 
     this.post("/transactions", (schema, request) => {
@@ -39,7 +39,7 @@ createServer({
       return schema.create("transaction", data);
     });
   },
-});
+});*/
 
 ReactDOM.render(
   <React.StrictMode>

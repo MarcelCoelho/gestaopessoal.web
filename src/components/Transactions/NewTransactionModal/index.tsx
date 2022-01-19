@@ -1,10 +1,10 @@
 import { FormEvent, useState } from "react";
 import Modal from "react-modal";
 
-import closeImg from "../../assets/close.svg";
-import incomeImg from "../../assets/income.svg";
-import outcomeImg from "../../assets/outcome.svg";
-import { useTransactions } from "../../hooks/useTransactions";
+import closeImg from "../../../assets/close.svg";
+import incomeImg from "../../../assets/income.svg";
+import outcomeImg from "../../../assets/outcome.svg";
+import { useTransactions } from "../../../hooks/useTransactions";
 
 import { Container, TransactionTypeContainer, RadioBox } from "./styles";
 
@@ -19,9 +19,15 @@ export function NewTransactionModal({
 }: NewTransactionModalProps) {
   const { createTransaction } = useTransactions();
 
-  const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [category, setCategory] = useState("");
+  const [data, setData] = useState(new Date());
+  const [produto, setProduto] = useState("");
+  const [loja, setLoja] = useState("");
+  const [local, setLocal] = useState("");
+  const [numeroParcela, setNumeroParcela] = useState(0);
+  const [quantidadeParcelas, setQuantidadeParcelas] = useState(0);
+  const [valor, setValor] = useState(0);
+  const [tipo, setTipo] = useState("");
+  const [observacao, setObservacao] = useState("");
 
   const [type, setType] = useState("deposit");
 
@@ -29,15 +35,26 @@ export function NewTransactionModal({
     event.preventDefault();
 
     await createTransaction({
-      title,
-      amount,
-      category,
-      type: type === "deposit" ? "deposit" : "withdraw",
+      data,
+      produto,
+      loja,
+      local,
+      numeroParcela,
+      quantidadeParcelas,      
+      valor,
+      tipo,
+      observacao
     });
 
-    setTitle("");
-    setAmount(0);
-    setCategory("");
+    setData(new Date());
+    setProduto("");
+    setLoja("");
+    setLocal("");
+    setNumeroParcela(0);
+    setQuantidadeParcelas(0);
+    setValor(0);
+    setTipo("");
+    setObservacao("");
     setType("deposit");
     onRequestClose();
   }
@@ -62,14 +79,14 @@ export function NewTransactionModal({
 
         <input
           placeholder="Titulo"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
+          value={produto}
+          onChange={(event) => setProduto(event.target.value)}
         ></input>
         <input
           placeholder="Valor"
           type="number"
-          value={amount}
-          onChange={(event) => setAmount(Number(event.target.value))}
+          value={valor}
+          onChange={(event) => setValor(Number(event.target.value))}
         ></input>
 
         <TransactionTypeContainer>
@@ -100,8 +117,8 @@ export function NewTransactionModal({
 
         <input
           placeholder="Categoria"
-          value={category}
-          onChange={(event) => setCategory(event.target.value)}
+          value={tipo}
+          onChange={(event) => setTipo(event.target.value)}
         ></input>
         <button type="submit">Cadastrar</button>
       </Container>

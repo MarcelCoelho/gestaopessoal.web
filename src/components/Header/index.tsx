@@ -1,50 +1,40 @@
 import { useState } from "react";
-import DatePicker, { registerLocale } from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import ptBr from "date-fns/locale/pt-BR";
-
 import logoImg from "../../assets/logo.svg";
 
-import { Container, Content } from "./styles";
+import { Container, Content, LinkButton } from "./styles";
 
-registerLocale("pt", ptBr);
 
 interface HeaderProps {
   onOpenNewTransactionModal: () => void;
+  onOpenFatura: () => void;
+  onOpenTipoPagamento: () => void;
+  showButtonTransacction: boolean;
+  showButtonFatura: boolean;
+  showButtonTipoPagamento: boolean;
 }
 
-export function Header({ onOpenNewTransactionModal }: HeaderProps) {
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
-
+export function Header({ onOpenNewTransactionModal, onOpenFatura, onOpenTipoPagamento, showButtonTransacction, showButtonFatura, showButtonTipoPagamento  }: HeaderProps) {
+  
   return (
     <Container>
       <Content>
         <img src={logoImg} alt="mfcmoney" />
-        <DatePicker
-          locale="pt"
-          dateFormat="P"
-          selected={startDate}
-          selectsStart
-          startDate={startDate}
-          endDate={endDate}
-          onChange={(date: Date | null) => setStartDate(date)}
-        />
-        <DatePicker
-          locale="pt"
-          dateFormat="P"
-          selected={endDate}
-          selectsEnd
-          startDate={startDate}
-          endDate={endDate}
-          minDate={startDate}
-          onChange={(date: Date | null) => setEndDate(date)}
-        />
-        <button type="button" onClick={onOpenNewTransactionModal}>
+    
+        <button type="button" onClick={onOpenFatura} hidden={showButtonFatura}>
+          <LinkButton to="/fatura" > Faturas </LinkButton> 
+        </button>
+
+        <button type="button" onClick={onOpenTipoPagamento} hidden={showButtonTipoPagamento}>
+          <LinkButton to="/tipoPagamento" > Tipos Pagamentos </LinkButton> 
+        </button>
+
+        <button type="button" onClick={onOpenNewTransactionModal} hidden={!showButtonTransacction}>
           Nova transação
         </button>
+       
       </Content>
     </Container>
   );

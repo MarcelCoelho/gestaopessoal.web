@@ -1,10 +1,10 @@
-import { useTransactions } from "../../hooks/useTransactions";
+import { useTransactions } from "../../../hooks/useTransactions";
 
 import { FiTrash, FiTrash2 } from "react-icons/fi";
 
 import { Container } from "./styles";
 
-export function TransactionTable() {
+export function Table() {
   const {
     transactions,
     removeTransaction,
@@ -34,18 +34,18 @@ export function TransactionTable() {
           {transactions &&
             transactions.map((transaction) => (
               <tr key={transaction.id}>
-                <td>{transaction.title}</td>
+                <td>{transaction.produto}</td>
                 <td className={transaction.type}>
                   {transaction.type === "withdraw" ? "-" : ""}
                   {new Intl.NumberFormat("pt-Br", {
                     style: "currency",
                     currency: "BRL",
-                  }).format(transaction.amount)}
+                  }).format(transaction.valor)}
                 </td>
-                <td>{transaction.category}</td>
+                <td>{transaction.tipo}</td>
                 <td>
                   {new Intl.DateTimeFormat().format(
-                    new Date(transaction.createdAt)
+                    new Date(transaction.dataCriacao)
                   )}
                 </td>
                 <td>
