@@ -1,6 +1,5 @@
 import {
     createContext,
-    useEffect,
     useState,
     ReactNode,
     useContext,
@@ -13,9 +12,11 @@ import {
   interface PrincipalContextData {
     handleOpenNewTransactionModal: () => void;
     handleCloseNewTransactionModal: () => void;
+    handleOpenTransaction: () => void;
     handleOpenFatura: () => void;
     handleOpenTipoPagamento: () => void;
     isNewTransactionModalOpen: boolean;
+    isOpenTransaction: boolean;
     isOpenFautra: boolean;
     isOpenTipoPagamento: boolean;
   }
@@ -30,8 +31,9 @@ import {
         false
       );
     
-      const [isOpenFautra, setOpenFatura] = useState( true  );
-      const [isOpenTipoPagamento, setOpenTipoPagamento] = useState( true  );
+      const [isOpenTransaction, setOpenTransaction] = useState(false);
+      const [isOpenFautra, setOpenFatura] = useState(false);
+      const [isOpenTipoPagamento, setOpenTipoPagamento] = useState(false);
     
       function handleOpenNewTransactionModal() {
         setIsNewTransactionModalOpen(true);
@@ -41,14 +43,25 @@ import {
         setIsNewTransactionModalOpen(false);
       }
     
+    function handleOpenTransaction() {
+        setOpenTransaction(false);
+        setOpenFatura(true);
+        setOpenTipoPagamento(true);
+        setIsNewTransactionModalOpen(true);
+      }
+
     function handleOpenFatura() {
+      setOpenTransaction(true);
       setOpenFatura(false);
       setOpenTipoPagamento(true);
+      setIsNewTransactionModalOpen(false);
     }
     
     function handleOpenTipoPagamento() {
+      setOpenTransaction(true);
       setOpenFatura(true);
       setOpenTipoPagamento(false);
+      setIsNewTransactionModalOpen(false);
     }
   
     return (
@@ -56,9 +69,11 @@ import {
         value={{
             handleOpenNewTransactionModal,
             handleCloseNewTransactionModal,
+            handleOpenTransaction,
             handleOpenFatura,
             handleOpenTipoPagamento,
             isNewTransactionModalOpen,
+            isOpenTransaction,
             isOpenFautra,
             isOpenTipoPagamento,
         }}

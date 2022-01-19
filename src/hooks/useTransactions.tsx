@@ -28,30 +28,6 @@ interface Transaction {
   dataModificacao: Date;
 }
 
-interface Fatura {
-  id: string;
-  mes: string;
-  ano: string;
-  dataInicio: Date;
-  dataFinal: Date;
-  observacao: string;
-  usuarioCriacao: string;
-  usuarioModificacao: string;
-  dataCriacao: Date;
-  dataModificacao: Date;
-}
-
-interface TipoPagamento {
-  id: string;
-  codigo: string;
-  descricao: string;
-  observacao: string;
-  usuarioCriacao: string;
-  usuarioModificacao: string;
-  dataCriacao: Date;
-  dataModificacao: Date;
-}
-
 type TransactionInput = Omit<Transaction, "id" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao" | "type" | "faturaId" | "tipoPagamentoId">;
 
 interface TransactionProviderProps {
@@ -60,8 +36,6 @@ interface TransactionProviderProps {
 
 interface TransactionsContextData {
   transactions: Transaction[];
-  faturas: Fatura[];
-  tiposPagamentos: TipoPagamento[];
   createTransaction: (transaction: TransactionInput) => Promise<void>;
   removeTransaction: (id: string) => void;
   removeAllTransactions: () => void;
@@ -74,31 +48,14 @@ const TransactionsContext = createContext<TransactionsContextData>(
 export function TransactionsProvider({ children }: TransactionProviderProps) {
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [faturas, setFaturas] = useState<Fatura[]>([]);
-  const [tiposPagamentos, setTiposPagamentos] = useState<TipoPagamento[]>([]);
-
 
   useEffect(() => {
     
-    async function getFaturas() {
-      const response = await api.get<Fatura[]>("/faturas");
-      
-      setFaturas(response.data);
-    }
-
-    async function getTiposPagamentos() {
-      const response = await api.get<TipoPagamento[]>("/tiposPagamentos");
-      setTiposPagamentos(response.data);
-    }
-
     async function getTransacctions() {
       const response = await api.get<Transaction[]>("/items");
       
       setTransactions(response.data);
     }
-
-    getFaturas();
-    getTiposPagamentos();
     getTransacctions();
     
   }, []);
@@ -130,8 +87,6 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     <TransactionsContext.Provider
       value={{
         transactions,
-        faturas,
-        tiposPagamentos,
         createTransaction,
         removeTransaction,
         removeAllTransactions,

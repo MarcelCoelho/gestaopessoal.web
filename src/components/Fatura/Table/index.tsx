@@ -1,4 +1,4 @@
-import { useTransactions } from "../../../hooks/useTransactions";
+import { useFaturas } from "../../../hooks/useFaturas";
 
 import { FiTrash, FiTrash2 } from "react-icons/fi";
 
@@ -7,9 +7,9 @@ import { Container } from "./styles";
 export function Table() {
   const {
     faturas,
-    removeAllTransactions,
-    removeTransaction
-  } = useTransactions();
+    removeAllFaturas,
+    removeFatura
+  } = useFaturas();
 
   return (
     <Container>
@@ -24,7 +24,7 @@ export function Table() {
               <FiTrash
                 size="20"
                 onClick={() => {
-                  removeAllTransactions();
+                  removeAllFaturas();
                 }}
               />
             </th>
@@ -46,7 +46,7 @@ export function Table() {
                   <FiTrash2
                     size="18"
                     onClick={() => {
-                      removeTransaction(fatura.id);
+                      removeFatura(fatura.id);
                     }}
                   />
                 </td>

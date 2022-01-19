@@ -1,4 +1,3 @@
-
 import { Header } from "../Header";
 import { Table } from "../TipoPagamento/Table";
 import { Title } from "../TipoPagamento/Title";
@@ -9,23 +8,22 @@ import { usePrincipal } from "../../hooks/usePrincipal";
 export function TipoPagamento() {
 
   const { 
-    handleOpenNewTransactionModal, 
-    handleCloseNewTransactionModal, 
+    handleOpenNewTransactionModal,
+    handleOpenTransaction,
     handleOpenFatura, 
-    handleOpenTipoPagamento, 
-    isNewTransactionModalOpen, 
-    isOpenFautra, 
-    isOpenTipoPagamento} = usePrincipal();
+    handleOpenTipoPagamento} = usePrincipal();
 
   return (
     <>
       <Header 
-            onOpenNewTransactionModal={handleOpenNewTransactionModal} 
+            onOpenNewTransactionModal={handleOpenNewTransactionModal}
+            onOpenTransaction={handleOpenTransaction}
             onOpenFatura={handleOpenFatura}
             onOpenTipoPagamento={handleOpenTipoPagamento}
+            showButtonNewTransaction={false}
             showButtonTransacction={true} 
-            showButtonFatura={isOpenFautra} 
-            showButtonTipoPagamento={isOpenFautra} 
+            showButtonFatura={true} 
+            showButtonTipoPagamento={false} 
           />
       <Container>
         <Title />
