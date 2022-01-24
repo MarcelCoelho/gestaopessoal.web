@@ -54,11 +54,13 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
 
   async function createFatura(FaturaInput: FaturaInput) {
     const response = await api.post("/Faturas", {
-      ...FaturaInput
+      ...FaturaInput,
+      usuarioCriacao: 'web',
+      usuarioModificacao: 'web'
     });
-    const { transaction } = response.data;
+    const { fatura } = response.data;
 
-    setFaturas([...faturas, transaction]);
+    setFaturas([...faturas, fatura]);
   }
 
   function removeFatura(id: string) {

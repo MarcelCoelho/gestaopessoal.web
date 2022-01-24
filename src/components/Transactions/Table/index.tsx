@@ -16,10 +16,15 @@ export function Table() {
       <table>
         <thead>
           <tr>
-            <th>Titulo</th>
-            <th>Valor</th>
-            <th>Categoria</th>
             <th>Data</th>
+            <th>Fatura</th>
+            <th>Produto</th>
+            <th>Loja</th>
+            <th>Local</th>
+            <th>Parcelas</th>
+            <th>Forma Pagto</th>
+            <th>Valor</th>
+            <th>Observação</th>
             <th>
               <FiTrash
                 size="20"
@@ -34,20 +39,22 @@ export function Table() {
           {transactions &&
             transactions.map((transaction) => (
               <tr key={transaction.id}>
-                <td>{transaction.produto}</td>
-                <td className={transaction.type}>
-                  {transaction.type === "withdraw" ? "-" : ""}
-                  {new Intl.NumberFormat("pt-Br", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(transaction.valor)}
-                </td>
-                <td>{transaction.tipo}</td>
-                <td>
+              <td>
                   {new Intl.DateTimeFormat().format(
-                    new Date(transaction.dataCriacao)
+                    new Date(transaction.data)
                   )}
                 </td>
+                <td>{transaction.fatura.observacao}</td>
+                <td>{transaction.produto}</td>
+                <td>{transaction.loja}</td>
+                <td>{transaction.local}</td>
+                <td>{(transaction.numeroParcela !== 0 && (transaction.numeroParcela + "/" + transaction.quantidadeParcelas))}</td>
+                <td>{transaction.tipoPagamento.descricao}</td>
+                <td>{new Intl.NumberFormat("pt-Br", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(Number(transaction.valor))}</td>
+                <td>{transaction.observacao}</td>
                 <td>
                   <FiTrash2
                     size="18"

@@ -18,6 +18,7 @@ export function Table() {
           <tr>
             <th>Codigo</th>
             <th>Descrição</th>
+            <th>Observação</th>
             <th>
               <FiTrash
                 size="20"
@@ -32,8 +33,9 @@ export function Table() {
           {tiposPagamentos &&
             tiposPagamentos.map((tpPagamento) => (
               <tr key={tpPagamento.id}>
-                <td>{tpPagamento.codigo}</td>               
-                <td>{tpPagamento.descricao}</td>               
+                <td>{tpPagamento.codigo}</td>
+                <td>{tpPagamento.descricao}</td>
+                <td>{tpPagamento.observacao}</td>            
                 <td>
                   <FiTrash2
                     size="18"

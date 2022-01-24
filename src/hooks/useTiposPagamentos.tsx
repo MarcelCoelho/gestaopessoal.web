@@ -12,10 +12,10 @@ interface TipoPagamento {
   codigo: string;
   descricao: string;
   observacao: string;
-  usuarioCriacao: string;
-  usuarioModificacao: string;
-  dataCriacao: Date;
-  dataModificacao: Date;
+  usuarioCriacao?: string;
+  usuarioModificacao?: string;
+  dataCriacao?: Date;
+  dataModificacao?: Date;
 }
 
 type TipoPagamentoInput = Omit<TipoPagamento, "id" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
@@ -26,7 +26,7 @@ interface TipoPagamentoProviderProps {
 
 interface TiposPagamentosContextData {
   tiposPagamentos: TipoPagamento[];
-  createTipoPagamento: (tipoPagamento: TipoPagamentoInput) => Promise<void>;
+  createTipoPagamento: (tipoPagamentoInput: TipoPagamentoInput) => Promise<void>;
   removeTipoPagamento: (id: string) => void;
   removeAllTiposPagamentos: () => void;
 }
@@ -36,34 +36,41 @@ const TiposPagamentosContext = createContext<TiposPagamentosContextData>(
 );
 
 export function TiposPagamentosProvider({ children }: TipoPagamentoProviderProps) {
- 
+
+
   const [tiposPagamentos, setTiposPagamentos] = useState<TipoPagamento[]>([]);
 
-  useEffect(() => {
-
-    async function getTiposPagamentos() {
-      const response = await api.get<TipoPagamento[]>("/tiposPagamentos");
-      setTiposPagamentos(response.data);
-    }
-
-    getTiposPagamentos();
-    
-  }, []);
-
-  async function createTipoPagamento(tipoPagamentoInput: TipoPagamentoInput) {
-    const response = await api.post("/tiposPagamentos", {
-      ...tipoPagamentoInput
-    });
-    const { transaction } = response.data;
-
-    setTiposPagamentos([...tiposPagamentos, transaction]);
+  async function getTiposPagamentos() {
+    const response = await api.get<TipoPagamento[]>("/tiposPagamentos");
+    setTiposPagamentos(response.data);
   }
 
-  function removeTipoPagamento(id: string) {
+  useEffect(() => {
+    getTiposPagamentos();
+  }, [tiposPagamentos]);
+
+  async function createTipoPagamento(tipoPagamentoInput: TipoPagamentoInput) {
+
+    const response = await api.post("/tiposPagamentos", 
+    {
+      ...tipoPagamentoInput,
+      usuarioCriacao: 'web',
+      usuarioModificacao: 'web'
+    }); 
+
+    const { tipoPagamento } = response.data;
+   
+   setTiposPagamentos([...tiposPagamentos, tipoPagamento]);        
+  }
+
+  async function removeTipoPagamento(id: string) {
+
+     await api.delete(`/tiposPagamentos/${id}`)
+
     var array = [...tiposPagamentos]; // make a separate copy of the array
 
-    array = tiposPagamentos.filter(function (transaction) {
-      return transaction.id !== id;
+    array = tiposPagamentos.filter(function (tipoPagamento) {
+      return tipoPagamento.id !== id;
     });
 
     setTiposPagamentos(array);
@@ -79,7 +86,7 @@ export function TiposPagamentosProvider({ children }: TipoPagamentoProviderProps
         tiposPagamentos,
         createTipoPagamento,
         removeTipoPagamento,
-        removeAllTiposPagamentos,
+        removeAllTiposPagamentos
       }}
     >
       {children}

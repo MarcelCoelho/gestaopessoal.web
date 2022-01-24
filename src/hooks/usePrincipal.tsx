@@ -16,14 +16,11 @@ import {
     handleOpenNewFaturaModal: () => void;
     handleCloseNewFaturaModal: () => void;
     handleOpenFatura: () => void;
-    handleOpenNewTipoPagamentoModal: () => void;
-    handleCloseNewTipoPagamentoModal: () => void;
     handleOpenTipoPagamento: () => void;
     isNewTransactionModalOpen: boolean;
     isOpenTransaction: boolean;
     isNewFaturaModalOpen: boolean;
     isOpenFautra: boolean;
-    isNewTipoPagamentoModalOpen: boolean;
     isOpenTipoPagamento: boolean;
   }
   
@@ -35,8 +32,7 @@ import {
     
     const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
     const [isNewFaturaModalOpen, setIsNewFaturaModalOpen] = useState(false);
-    const [isNewTipoPagamentoModalOpen, setIsNewTipoPagamentoModalOpen] = useState(false);
-    
+   
       const [isOpenTransaction, setOpenTransaction] = useState(false);
       const [isOpenFautra, setOpenFatura] = useState(false);
       const [isOpenTipoPagamento, setOpenTipoPagamento] = useState(false);
@@ -55,14 +51,6 @@ import {
 
       function handleCloseNewFaturaModal() {
         setIsNewFaturaModalOpen(false);
-      }
-
-      function handleOpenNewTipoPagamentoModal() {
-        setIsNewTipoPagamentoModalOpen(true);
-      }
-    
-      function handleCloseNewTipoPagamentoModal() {
-        setIsNewTipoPagamentoModalOpen(false);
       }
     
       function handleOpenTransaction() {
@@ -95,14 +83,11 @@ import {
             handleOpenNewFaturaModal,
             handleCloseNewFaturaModal,
             handleOpenFatura,
-            handleOpenNewTipoPagamentoModal,
-            handleCloseNewTipoPagamentoModal,
             handleOpenTipoPagamento,
             isNewTransactionModalOpen,
             isOpenTransaction,
             isNewFaturaModalOpen,
             isOpenFautra,
-            isNewTipoPagamentoModalOpen,
             isOpenTipoPagamento,
         }}
       >

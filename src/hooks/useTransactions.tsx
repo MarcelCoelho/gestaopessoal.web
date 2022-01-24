@@ -15,20 +15,23 @@ interface Transaction {
   local:	string;
   numeroParcela:	number;
   quantidadeParcelas:	number;
-  tipo:	string
-  valor:	number;
+  fatura: {
+    observacao: string;
+  };
+  tipoPagamento: {
+    descricao: string;
+  };
+  valor: string;
   observacao:	string;
-  
   faturaId:	string
   tipoPagamentoId: string;
-  type?: "deposit" | "withdraw";
   usuarioCriacao: string;
   usuarioModificacao: string;
   dataCriacao: Date;
   dataModificacao: Date;
 }
 
-type TransactionInput = Omit<Transaction, "id" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao" | "type" | "faturaId" | "tipoPagamentoId">;
+type TransactionInput = Omit<Transaction, "id" | "tipoPagamento" | "fatura" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
 interface TransactionProviderProps {
   children: ReactNode;
@@ -61,23 +64,30 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   }, []);
 
   async function createTransaction(transactionInput: TransactionInput) {
-    const response = await api.post("/transactions", {
-      ...transactionInput
+    const response = await api.post("/items", 
+    {
+      ...transactionInput,
+      usuarioCriacao: 'web',
+      usuarioModificacao: 'web'
     });
-    const { transaction } = response.data;
 
+    const { transaction } = response.data;
+    
     setTransactions([...transactions, transaction]);
   }
 
-  function removeTransaction(id: string) {
-    var array = [...transactions]; // make a separate copy of the array
+  async function removeTransaction(id: string) {
 
-    array = transactions.filter(function (transaction) {
-      return transaction.id !== id;
-    });
+    await api.delete(`/items/${id}`)
 
-    setTransactions(array);
-  }
+   var array = [...transactions]; // make a separate copy of the array
+
+   array = transactions.filter(function (transaction) {
+     return transaction.id !== id;
+   });
+
+   setTransactions(array);
+ }
 
   function removeAllTransactions() {
     setTransactions([]);

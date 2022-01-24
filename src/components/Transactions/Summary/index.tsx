@@ -1,26 +1,25 @@
 import incomeImg from "../../../assets/income.svg";
 import outcomeImg from "../../../assets/outcome.svg";
 import totalImg from "../../../assets/total.svg";
-import { useTransactions } from "../../../hooks/useTransactions";
+
+import { useTransactions } from '../../../hooks/useTransactions';
 
 import { Container } from "./styles";
 
 export function Summary() {
-  const { transactions, faturas, tiposPagamentos } = useTransactions();
+  const { transactions } = useTransactions();
 
-  console.log(faturas);
-  console.log(tiposPagamentos);
-  console.log(transactions);
-
-  /*const summary = transactions.reduce(
+  const summary = transactions.reduce(
     (acc, transaction) => {
-      if (transaction.type === "deposit") {
-        acc.deposits += transaction.valor;
-        acc.total += transaction.valor;
+     /* if (transaction.tipoPagamento.descricao === "Crédito") {
+        acc.deposits += Number(transaction.valor);
+        acc.total += Number(transaction.valor);
       } else {
-        acc.withdraw += transaction.valor;
-        acc.total -= transaction.valor;
-      }
+        acc.withdraw += Number(transaction.valor);
+        acc.total -= Number(transaction.valor);
+      }*/
+
+      acc.total += Number(transaction.valor);
 
       return acc;
     },
@@ -29,7 +28,7 @@ export function Summary() {
       withdraw: 0,
       total: 0,
     }
-  );*/
+  );
 
   return (
     <Container>
@@ -67,7 +66,7 @@ export function Summary() {
           {new Intl.NumberFormat("pt-Br", {
             style: "currency",
             currency: "BRL",
-          }).format(0)}
+          }).format(summary.total)}
         </strong>
       </div>
     </Container>

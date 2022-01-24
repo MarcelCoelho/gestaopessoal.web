@@ -1,17 +1,26 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Modal from "react-modal";
 
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+
+import DatePicker from 'react-datepicker';
+import {registerLocale} from 'react-datepicker';
+import pt from 'date-fns/locale/pt';
+
 import closeImg from "../../../assets/close.svg";
-import incomeImg from "../../../assets/income.svg";
-import outcomeImg from "../../../assets/outcome.svg";
 import { useTransactions } from "../../../hooks/useTransactions";
 
-import { Container, TransactionTypeContainer, RadioBox } from "./styles";
+import { Container} from "./styles";
+import { useTiposPagamentos } from "../../../hooks/useTiposPagamentos";
+import { useFaturas } from "../../../hooks/useFaturas";
 
 interface NewTransactionModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
 }
+
+registerLocale('pt', pt);
 
 export function NewTransactionModal({
   isOpen,
@@ -19,20 +28,70 @@ export function NewTransactionModal({
 }: NewTransactionModalProps) {
   const { createTransaction } = useTransactions();
 
+  const { tiposPagamentos } = useTiposPagamentos();
+  const { faturas } = useFaturas();
+
+  const [optionsTipoPagamento, setOptionsTipoPagamento] = useState<string[]>([]);
+  const [optionsFatura, setOptionsFatura] = useState<string[]>([]);
+
   const [data, setData] = useState(new Date());
   const [produto, setProduto] = useState("");
   const [loja, setLoja] = useState("");
   const [local, setLocal] = useState("");
-  const [numeroParcela, setNumeroParcela] = useState(0);
-  const [quantidadeParcelas, setQuantidadeParcelas] = useState(0);
-  const [valor, setValor] = useState(0);
-  const [tipo, setTipo] = useState("");
+  const [numeroParcela, setNumeroParcela] = useState<number>();
+  const [quantidadeParcelas, setQuantidadeParcelas] = useState<number>();
+  const [valor, setValor] = useState("");
   const [observacao, setObservacao] = useState("");
+  const [faturaId, setFaturaId] = useState("");
+  const [tipoPagamentoId, setTipoPagamentoId] = useState("");
 
-  const [type, setType] = useState("deposit");
+  useEffect(() => {    
+      getOptionsTipoPagamento();
+      getOptionsFatura();
+  }, [tiposPagamentos, faturas]);
+
+  function getOptionsTipoPagamento(){
+    let optionsTemporary = []
+
+    for (let i = 0; i < tiposPagamentos.length; ++i)
+      optionsTemporary[i] = tiposPagamentos[i].descricao;
+      
+    setOptionsTipoPagamento(optionsTemporary);
+  }
+
+  function getOptionsFatura(){
+    let optionsTemporary = []
+
+    for (let i = 0; i < faturas.length; ++i)
+      optionsTemporary[i] = faturas[i].observacao;
+      
+    setOptionsFatura(optionsTemporary);
+  }
+
+  function getFaturaId(value: string) {
+    for (let i = 0; i < faturas.length; ++i){
+      if (faturas[i].observacao === value) {
+        return faturas[i].id;
+      }
+    }
+  }
+
+  function getTipoPagamentoId(value: string) {
+    for (let i = 0; i < tiposPagamentos.length; ++i){
+      if (tiposPagamentos[i].descricao === value) {
+
+        return tiposPagamentos[i].id;
+      }
+    }
+  }
 
   async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
+
+    const _faturaId = getFaturaId(faturaId);
+    const _tipoPagamentoId = getTipoPagamentoId(tipoPagamentoId);
+
+    const _valor = Number.parseFloat(valor).toFixed(2);
 
     await createTransaction({
       data,
@@ -40,25 +99,26 @@ export function NewTransactionModal({
       loja,
       local,
       numeroParcela,
-      quantidadeParcelas,      
-      valor,
-      tipo,
-      observacao
+      quantidadeParcelas,
+      valor: _valor,
+      observacao,
+      faturaId: _faturaId,
+      tipoPagamentoId: _tipoPagamentoId
     });
 
     setData(new Date());
     setProduto("");
     setLoja("");
     setLocal("");
-    setNumeroParcela(0);
-    setQuantidadeParcelas(0);
-    setValor(0);
-    setTipo("");
+    setNumeroParcela(1);
+    setQuantidadeParcelas(1);
+    setValor("");
     setObservacao("");
-    setType("deposit");
+    setFaturaId("");
+    setTipoPagamentoId("");
     onRequestClose();
   }
-
+  
   return (
     <Modal
       isOpen={isOpen}
@@ -74,53 +134,80 @@ export function NewTransactionModal({
         <img src={closeImg} alt="Fechar Modal" />
       </button>
 
-      <Container onSubmit={handleCreateNewTransaction}>
+      <Container>
+      <form onSubmit={handleCreateNewTransaction}>
         <h2>Cadastrar Transacao</h2>
 
+        <DatePicker
+           placeholderText="Data"
+           locale="pt"           
+           selected={data}
+           onChange={(date: Date) => setData(date)}
+           dateFormat="dd/MM/yyyy">
+        </DatePicker>
+
         <input
-          placeholder="Titulo"
+          placeholder="Produto"
           value={produto}
           onChange={(event) => setProduto(event.target.value)}
         ></input>
+
+        <input
+          placeholder="Loja"
+          value={loja}
+          onChange={(event) => setLoja(event.target.value)}
+        ></input>
+
+        <input
+          placeholder="Local"
+          value={local}
+          onChange={(event) => setLocal(event.target.value)}
+        ></input>
+
+        <input
+          placeholder="N. Parcela"
+          type='text'
+          value={numeroParcela}
+          onChange={(event) => setNumeroParcela(Number(event.target.value))}
+        ></input>
+
+        <input
+          placeholder="Qnt. Parcela"
+          type="text"
+          value={quantidadeParcelas}
+          onChange={(event) => setQuantidadeParcelas(Number(event.target.value))}
+        ></input>
+
         <input
           placeholder="Valor"
-          type="number"
           value={valor}
-          onChange={(event) => setValor(Number(event.target.value))}
-        ></input>
+          onChange={(event) => setValor(event.target.value)}
+        ></input>        
 
-        <TransactionTypeContainer>
-          <RadioBox
-            type="button"
-            isActive={type === "deposit"}
-            activeColor="green"
-            onClick={() => {
-              setType("deposit");
-            }}
-          >
-            <img src={incomeImg} alt="Entrada" />
-            <span>Entrada</span>
-          </RadioBox>
+        <Autocomplete
+            options={optionsFatura}
+            onChange={(event, value) => setFaturaId(value)}
+            style={{ width: '100%', height: '100%', margin: '0.5rem 0 0.5rem 0' }}
+            renderInput={(params) =>
+            <TextField {...params} label="Fatura" variant="outlined" />}
+        />
 
-          <RadioBox
-            type="button"
-            isActive={type === "whitdraw"}
-            activeColor="red"
-            onClick={() => {
-              setType("whitdraw");
-            }}
-          >
-            <img src={outcomeImg} alt="Saída" />
-            <span>Saída</span>
-          </RadioBox>
-        </TransactionTypeContainer>
+        <Autocomplete
+            options={optionsTipoPagamento}
+            onChange={(event, value) => setTipoPagamentoId(value)}
+            style={{ width: '100%', height: '100%', margin: '0.5rem 0 0.5rem 0' }}
+            renderInput={(params) =>
+            <TextField {...params} label="Tipo Pagamento" variant="outlined" />}
+        />
 
         <input
-          placeholder="Categoria"
-          value={tipo}
-          onChange={(event) => setTipo(event.target.value)}
-        ></input>
+          placeholder="Observação"
+          value={observacao}
+          onChange={(event) => setObservacao(event.target.value)}
+        ></input>        
+      
         <button type="submit">Cadastrar</button>
+        </form>
       </Container>
     </Modal>
   );

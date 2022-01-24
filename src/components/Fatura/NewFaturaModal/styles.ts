@@ -3,7 +3,7 @@ import { darken, transparentize } from "polished";
 
 export const Container = styled.div`
 
-  height: 80vh;
+  height: 50vh;
   overflow-y: auto;
 
  form {
@@ -14,10 +14,10 @@ export const Container = styled.div`
     margin-bottom: 1rem;
   }
 
-  input, datePicker {
+  input {
     width: 100%;
     padding: 0 1.5rem;
-    height: 3rem;
+    height: 4rem;
     border-radius: 0.25rem;
 
     border: 1px solid var(--border-botton);

@@ -1,9 +1,15 @@
+import {
+  useState
+} from "react";
+
 import { Header } from "../Header";
 import { Table } from "../TipoPagamento/Table";
 import { Title } from "../TipoPagamento/Title";
+import { NewTipoPagamentoModal } from "../../components/TipoPagamento/NewTipoPagamentoModal";
 
 import { Container } from "./styles";
 import { usePrincipal } from "../../hooks/usePrincipal";
+import { TiposPagamentosProvider } from "../../hooks/useTiposPagamentos";
 
 export function TipoPagamento() {
 
@@ -11,12 +17,21 @@ export function TipoPagamento() {
     handleOpenNewTransactionModal,
     handleOpenTransaction,
     handleOpenNewFaturaModal,
-    handleOpenFatura, 
-    handleOpenNewTipoPagamentoModal,
+    handleOpenFatura,
     handleOpenTipoPagamento} = usePrincipal();
 
-  return (
-    <>
+  const [isNewTipoPagamentoModalOpen, setIsNewTipoPagamentoModalOpen] = useState(false);
+   
+  function handleOpenNewTipoPagamentoModal() {
+    setIsNewTipoPagamentoModalOpen(true);
+  } 
+
+  function handleCloseNewTipoPagamentoModal() {
+    setIsNewTipoPagamentoModalOpen(false);
+  }
+
+  return ( 
+    <TiposPagamentosProvider>
       <Header 
             onOpenNewTransactionModal={handleOpenNewTransactionModal}
             onOpenTransaction={handleOpenTransaction}
@@ -35,6 +50,10 @@ export function TipoPagamento() {
         <Title />
         <Table />
       </Container>
-      </>
+      <NewTipoPagamentoModal
+        isOpen={isNewTipoPagamentoModalOpen}
+        onRequestClose={handleCloseNewTipoPagamentoModal}
+      />
+    </TiposPagamentosProvider>
   );
 }
