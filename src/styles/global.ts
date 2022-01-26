@@ -13,6 +13,7 @@ export const GlobalStyle = createGlobalStyle`
     --background: #F0F2F5;
     --shape: #FFFFFF;
     --border-botton: #d7d7d7;
+    --green-light: #3CB371;
   }
   
   * {
@@ -29,6 +30,12 @@ export const GlobalStyle = createGlobalStyle`
 
    @media (max-width: 720px) {
      font-size: 87.5%; // 14px
+     
+    .tableData {
+      font-size: 0.5rem;
+      background: black;
+    }
+
    }
 
  }

@@ -1,74 +1,95 @@
-import incomeImg from "../../../assets/income.svg";
-import outcomeImg from "../../../assets/outcome.svg";
-import totalImg from "../../../assets/total.svg";
-
 import { useTransactions } from '../../../hooks/useTransactions';
+import { useFaturas } from '../../../hooks/useFaturas';
+import { TotalByTipoPagamento } from '../../../components/TotalByTipoPagamento';
 
-import { Container } from "./styles";
+import { Content, Container } from "./styles";
+import { useEffect, useState } from 'react';
+
+interface TotalFatura {
+  descricao: string,
+  inicio: Date,
+  fim: Date,
+  total: number
+};
 
 export function Summary() {
-  const { transactions } = useTransactions();
+  const { transactionsByFatura, getTransactionsByFatura } = useTransactions();
+  const { faturas } = useFaturas();
 
-  const summary = transactions.reduce(
-    (acc, transaction) => {
-     /* if (transaction.tipoPagamento.descricao === "Crédito") {
-        acc.deposits += Number(transaction.valor);
-        acc.total += Number(transaction.valor);
-      } else {
-        acc.withdraw += Number(transaction.valor);
-        acc.total -= Number(transaction.valor);
-      }*/
+  const [items, setItems] = useState<TotalFatura[]>([]);
+  const [itemSelecionado, setItemSelecionado] = useState("");
 
-      acc.total += Number(transaction.valor);
+  useEffect(() => {
+    getTotalPorFatura();
+  }, [transactionsByFatura])
 
-      return acc;
-    },
-    {
-      deposits: 0,
-      withdraw: 0,
-      total: 0,
+  let arrayAgrupadoPorFatura: TotalFatura[] = [];
+
+  function getTotalPorFatura() {
+
+    faturas.forEach(fatura => {
+      const descricao = fatura.observacao;
+      const inicio = fatura.dataInicio;
+      const fim = fatura.dataFinal;
+
+      let item: TotalFatura = {
+        descricao,
+        inicio,
+        fim,
+        total: 0
+      };
+
+      transactionsByFatura.forEach(transaction => {
+        if (transaction.fatura.observacao === item.descricao) {
+          item.total += Number(transaction.valor);
+        }
+      })
+
+      if (item.total > 0)
+        arrayAgrupadoPorFatura.push(item);
+    });
+
+    setItems(arrayAgrupadoPorFatura);
+  }
+
+  function handleDivFatura(descricao: string) {
+    if (itemSelecionado === descricao) {
+      setItemSelecionado(null);
+      getTransactionsByFatura(null);
     }
-  );
+    else {
+      setItemSelecionado(descricao);
+      getTransactionsByFatura(descricao);
+    }
+  }
 
   return (
-    <Container>
-      <div>
-        <header>
-          <p>Entradas</p>
-          <img src={incomeImg} alt="" />
-        </header>
-        <strong>
-          {new Intl.NumberFormat("pt-Br", {
-            style: "currency",
-            currency: "BRL",
-          }).format(0)}
-        </strong>
-      </div>
-      <div>
-        <header>
-          <p>Saidas</p>
-          <img src={outcomeImg} alt="" />
-        </header>
-        <strong>
-          -{" "}
-          {new Intl.NumberFormat("pt-Br", {
-            style: "currency",
-            currency: "BRL",
-          }).format(0)}
-        </strong>
-      </div>
-      <div className="highlight-background">
-        <header>
-          <p>Total</p>
-          <img src={totalImg} alt="" />
-        </header>
-        <strong>
-          {new Intl.NumberFormat("pt-Br", {
-            style: "currency",
-            currency: "BRL",
-          }).format(summary.total)}
-        </strong>
-      </div>
-    </Container>
+    <>
+      <Content>
+        <Container>
+          {items &&
+            items.map((item) => (
+              <div key={item.descricao} onClick={() => handleDivFatura(item.descricao)}>
+                <header>
+                  <p>{item.descricao}</p>
+                </header>
+                <main>
+                  <p> {new Intl.DateTimeFormat().format(new Date(item.inicio))}-{new Intl.DateTimeFormat().format(new Date(item.fim))}   </p>
+                </main>
+                <footer>
+                  {new Intl.NumberFormat("pt-Br", {
+                    style: "currency",
+                    currency: "BRL",
+                  }).format(item.total)}
+                </footer>
+              </div>
+            ))}
+        </Container>
+        {itemSelecionado &&
+          (
+            <TotalByTipoPagamento />
+          )}
+      </Content>
+    </>
   );
 }

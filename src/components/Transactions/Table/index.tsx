@@ -6,7 +6,7 @@ import { Container } from "./styles";
 
 export function Table() {
   const {
-    transactions,
+    transactionsByFatura,
     removeTransaction,
     removeAllTransactions,
   } = useTransactions();
@@ -36,10 +36,10 @@ export function Table() {
           </tr>
         </thead>
         <tbody>
-          {transactions &&
-            transactions.map((transaction) => (
+          {transactionsByFatura &&
+            transactionsByFatura.map((transaction) => (
               <tr key={transaction.id}>
-              <td>
+                <td>
                   {new Intl.DateTimeFormat().format(
                     new Date(transaction.data)
                   )}
@@ -51,9 +51,9 @@ export function Table() {
                 <td>{(transaction.numeroParcela !== 0 && (transaction.numeroParcela + "/" + transaction.quantidadeParcelas))}</td>
                 <td>{transaction.tipoPagamento.descricao}</td>
                 <td>{new Intl.NumberFormat("pt-Br", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(Number(transaction.valor))}</td>
+                  style: "currency",
+                  currency: "BRL",
+                }).format(Number(transaction.valor))}</td>
                 <td>{transaction.observacao}</td>
                 <td>
                   <FiTrash2
