@@ -20,6 +20,7 @@ export function Table() {
             <th>Período</th>
             <th>De</th>
             <th>Até</th>
+            <th>Fechada</th>
             <th>
               <FiTrash
                 size="20"
@@ -41,7 +42,8 @@ export function Table() {
                   )}</td>
                <td>{new Intl.DateTimeFormat().format(
                     new Date(fatura.dataFinal)
-                  )}</td>    
+                  )}</td>
+                  <td>{fatura.fechada}</td>  
                 <td>
                   <FiTrash2
                     size="18"

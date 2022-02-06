@@ -14,6 +14,7 @@ interface Fatura {
   dataInicio: Date;
   dataFinal: Date;
   orden: number;
+  fechada: boolean;
   observacao: string;
   usuarioCriacao: string;
   usuarioModificacao: string;

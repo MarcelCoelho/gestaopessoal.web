@@ -38,20 +38,78 @@ export function Table() {
     removeAllTransactions,
   } = useTransactions();
 
-  const [items, setItems] = useState<Transaction[]>([])
+  const [items, setItems] = useState<Transaction[]>([]);
+
+  const [paramPesquisa, setParamPesquisa] = useState("");
 
   useEffect(() => {
+    setItemsByFaturaOrTipoPagamento();
+
+  }, [activeTransaction, transactionsByFatura, transactionsByTipoPagamento])
+
+  function setItemsByFaturaOrTipoPagamento() {
     if (activeTransaction === "fatura")
       setItems(transactionsByFatura);
     else
       setItems(transactionsByTipoPagamento);
+  }
 
-  }, [activeTransaction, transactionsByFatura, transactionsByTipoPagamento])
+  function indexOf(valor: string) {
+    return (valor.toLocaleLowerCase().indexOf(paramPesquisa.toLocaleLowerCase()) > -1);
+  }
+
+  function handlePesquisar() {
+
+    if (paramPesquisa.trim() != "") {
+
+      let arrayItems = [];
+      let itemEncontrado = false;
+
+      items.forEach((item) => {
+
+        if (indexOf(item.produto))
+          itemEncontrado = true;
+
+        if (indexOf(item.loja))
+          itemEncontrado = true;
+
+        if (indexOf(item.local))
+          itemEncontrado = true;
+
+        if (indexOf(item.observacao))
+          itemEncontrado = true;
+
+        if (item.valor === paramPesquisa)
+          itemEncontrado = true;
+
+        if (new Date(item.data) === new Date(paramPesquisa))
+          itemEncontrado = true;
+
+        if (itemEncontrado)
+          arrayItems.push(item);
+
+        itemEncontrado = false;
+
+      });
+
+      if (arrayItems.length > 0)
+        setItems(arrayItems);
+
+      setParamPesquisa("");
+    }
+    else {
+      setItemsByFaturaOrTipoPagamento();
+    }
+  }
 
   return (
     <Container>
-      <input placeholder="Digite alguma coisa para pesquisar..."></input>
-      <button type="submit">IR</button>
+      <input
+        placeholder="Começe a escrever para pesquisar..."
+        value={paramPesquisa}
+        onChange={(event) => setParamPesquisa(event.target.value)}
+      />
+      <button type="submit" onClick={handlePesquisar} >IR</button>
       <table>
         <thead>
           <tr>

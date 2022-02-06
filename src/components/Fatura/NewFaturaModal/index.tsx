@@ -11,6 +11,7 @@ import closeImg from "../../../assets/close.svg";
 import { useFaturas } from "../../../hooks/useFaturas";
 
 import { Container } from "./styles";
+import { Checkbox } from "@material-ui/core";
 
 registerLocale('pt', pt)
 
@@ -29,6 +30,7 @@ export function NewFaturaModal({
   const [observacao, setObservacao] = useState("");
   const [dataInicio, setDataInicio] = useState(new Date());
   const [dataFinal, setDataFinal] = useState(new Date());
+  const [fechada, setFechada] = useState(false);
 
   async function handleCreateNewTipoPagamento(event: FormEvent) {
     event.preventDefault();
@@ -41,12 +43,14 @@ export function NewFaturaModal({
                         ano,
                         dataInicio,
                         dataFinal,
+                        fechada,
                         observacao});
 
     setPeriodo("");
     setObservacao("");
     setDataInicio(new Date());
     setDataFinal(new Date());
+    setFechada(false);
 
     onRequestClose();
   }
@@ -98,6 +102,11 @@ export function NewFaturaModal({
            onChange={(date: Date) => setDataFinal(date)}
            dateFormat="dd/MM/yyyy">
         </DatePicker>
+
+        <Checkbox 
+           value={fechada}
+           onChange={(event) => setFechada(Boolean(event.target.value))}
+        />
       
         <button type="submit">Cadastrar</button>
         </form>

@@ -98,7 +98,9 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     if (transactionInput.quantidadeParcelas == 0 || transactionInput.quantidadeParcelas == undefined)
       transactionInput.quantidadeParcelas = 1;
 
-    for (let i = 1; i <= transactionInput.quantidadeParcelas; ++i) {
+    let contadorParcelas = transactionInput.numeroParcela;
+
+    for (let i = contadorParcelas; i <= transactionInput.quantidadeParcelas; ++i) {
 
       let transactionPost = transactionInput;
       var fatura: Fatura;
@@ -108,7 +110,12 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
         fatura = getFatura(null, order);
       }
 
-      transactionPost.numeroParcela = i;
+      let dateString = new Date(transactionPost.data).toUTCString();
+      dateString = dateString.split(' ').slice(0, 4).join(' ');
+
+      transactionPost.data = new Date(dateString);
+
+      transactionPost.numeroParcela = contadorParcelas;
       transactionPost.data = addData(dateTransaction, i);
       transactionPost.faturaId = fatura.id;
 
@@ -123,6 +130,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
       setTransactions([...transactions, transaction]);
       await getTransacctions();
+      contadorParcelas ++;
     }
   }
 

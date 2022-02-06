@@ -27,6 +27,13 @@ export const Container = styled.div`
       background: var(--green-light);
       font-size:0.8rem;
       font-weight: 400;
+
+      transition: background-color 0.2s;
+
+      &:hover {
+        filter: brightness(0.8);
+        border: 2px solid #04d361;
+      }
     }
 
       margin-top: 4rem;

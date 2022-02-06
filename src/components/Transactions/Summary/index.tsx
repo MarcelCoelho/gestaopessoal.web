@@ -2,13 +2,14 @@ import { useTransactions } from '../../../hooks/useTransactions';
 import { useFaturas } from '../../../hooks/useFaturas';
 import { TotalByTipoPagamento } from '../../../components/TotalByTipoPagamento';
 
-import { Content, Container } from "./styles";
+import { Content, Component } from "./styles";
 import { useEffect, useState } from 'react';
 
 interface TotalFatura {
   descricao: string,
   inicio: Date,
   fim: Date,
+  fechada: boolean,
   quantidade: number,
   total: number
 };
@@ -32,17 +33,16 @@ export function Summary() {
       const descricao = fatura.observacao;
       const inicio = fatura.dataInicio;
       const fim = fatura.dataFinal;
+      const fechada = fatura.fechada;
 
       let item: TotalFatura = {
         descricao,
         inicio,
         fim,
+        fechada,
         quantidade: 0,
         total: 0
       };
-
-      let qntTotal = 0;
-
 
       transactionsByFatura.forEach(transaction => {
         if (transaction.fatura.observacao === item.descricao) {
@@ -73,10 +73,11 @@ export function Summary() {
   return (
     <>
       <Content>
-        <Container>
-          {items &&
-            items.map((item) => (
-              <div key={item.descricao} onClick={() => handleDivFatura(item.descricao)}>
+
+        {items &&
+          items.map((item) => (
+            <Component fechada={item.fechada} key={item.descricao} onClick={() => handleDivFatura(item.descricao)}>
+              <div>
                 <header>
                   <p>{item.descricao}</p>
                 </header>
@@ -91,8 +92,9 @@ export function Summary() {
                 </footer>
                 <strong>{item.quantidade}</strong>
               </div>
-            ))}
-        </Container>
+            </Component>
+          ))}
+
         {itemSelecionado &&
           (
             <TotalByTipoPagamento />
