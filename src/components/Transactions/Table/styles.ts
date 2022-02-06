@@ -1,7 +1,35 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  margin-top: 4rem;
+
+    display: block;
+    align-items: left;
+
+    input {
+      margin-left: -10rem;
+      margin-bottom: 1rem;
+      width: 25rem;
+      height: 3rem;
+      border: none;
+      padding: 0.5rem; 
+    }
+
+    input:focus {
+      outline: none;
+      border-radius: 0.7rem;
+    }
+
+    button {
+      margin-left: -2rem;
+      width: 6rem;
+      height: 3rem;
+      border: none;
+      background: var(--green-light);
+      font-size:0.8rem;
+      font-weight: 400;
+    }
+
+      margin-top: 4rem;
   
       table {
       

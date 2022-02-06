@@ -11,53 +11,56 @@ import { FaturasProvider } from "../../hooks/useFaturas";
 import { Container } from "./styles";
 
 export function Transactions() {
- 
+
   const {
     handleOpenTransaction,
     handleOpenFatura,
-    handleOpenTipoPagamento} = usePrincipal();
+    handleOpenTipoPagamento } = usePrincipal();
 
-    const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
-   
-    function handleOpenNewTransactionModal() {
-      setIsNewTransactionModalOpen(true);
-    } 
-  
-    function handleCloseNewTransactionModal() {
-      setIsNewTransactionModalOpen(false);
-    }
+  const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
+
+  function handleOpenNewTransactionModal() {
+    setIsNewTransactionModalOpen(true);
+  }
+
+  function handleCloseNewTransactionModal() {
+    setIsNewTransactionModalOpen(false);
+  }
 
   return (
     <>
-    <TransactionsProvider>
       <FaturasProvider>
         <TiposPagamentosProvider>
-          <Header 
-                onOpenNewTransactionModal={handleOpenNewTransactionModal}
-                onOpenTransaction={handleOpenTransaction}
-                onOpenNewFatura={() => {}}
-                onOpenFatura={handleOpenFatura}
-                onOpenNewTipoPagamento={() => {}}
-                onOpenTipoPagamento={handleOpenTipoPagamento}
-                showButtonNewTransaction={true}
-                showButtonTransacction={false} 
-                showButtonNewFatura={false}
-                showButtonFatura={true} 
-                showButtonNewTipoPagamento={false}
-                showButtonTipoPagamento={true} 
-              />
-          <Container>
-            <Summary />
-            <Table />
-          </Container>
-          
-          <NewTransactionModal
-            isOpen={isNewTransactionModalOpen}
-            onRequestClose={handleCloseNewTransactionModal}
-          />
+          <TransactionsProvider>
+
+
+            <Header
+              onOpenNewTransactionModal={handleOpenNewTransactionModal}
+              onOpenTransaction={handleOpenTransaction}
+              onOpenNewFatura={() => { }}
+              onOpenFatura={handleOpenFatura}
+              onOpenNewTipoPagamento={() => { }}
+              onOpenTipoPagamento={handleOpenTipoPagamento}
+              showButtonNewTransaction={true}
+              showButtonTransacction={false}
+              showButtonNewFatura={false}
+              showButtonFatura={true}
+              showButtonNewTipoPagamento={false}
+              showButtonTipoPagamento={true}
+            />
+            <Container>
+              <Summary />
+              <Table />
+            </Container>
+
+            <NewTransactionModal
+              isOpen={isNewTransactionModalOpen}
+              onRequestClose={handleCloseNewTransactionModal}
+            />
+
+          </TransactionsProvider>
         </TiposPagamentosProvider>
       </FaturasProvider>
-    </TransactionsProvider>
     </>
   );
 }

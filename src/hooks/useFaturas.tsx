@@ -13,6 +13,7 @@ interface Fatura {
   ano: string;
   dataInicio: Date;
   dataFinal: Date;
+  orden: number;
   observacao: string;
   usuarioCriacao: string;
   usuarioModificacao: string;
@@ -20,7 +21,7 @@ interface Fatura {
   dataModificacao: Date;
 }
 
-type FaturaInput = Omit<Fatura, "id" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
+type FaturaInput = Omit<Fatura, "id" | "orden" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
 interface FaturaProviderProps {
   children: ReactNode;
@@ -55,6 +56,7 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
   async function createFatura(FaturaInput: FaturaInput) {
     const response = await api.post("/Faturas", {
       ...FaturaInput,
+      orden: 0,
       usuarioCriacao: 'web',
       usuarioModificacao: 'web'
     });

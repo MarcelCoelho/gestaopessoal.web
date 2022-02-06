@@ -15,7 +15,7 @@ export function TotalByTipoPagamento() {
 
   const [items, setItems] = useState<TotalFatura[]>([]);
 
-  const { transactionsByFatura } = useTransactions();
+  const { transactionsByFatura, getTransactionsByTipoPagamento } = useTransactions();
   const { tiposPagamentos } = useTiposPagamentos();
 
   useEffect(() => {
@@ -46,12 +46,17 @@ export function TotalByTipoPagamento() {
     setItems(agrupadorFaturaByTipoPagamento);
 
   }
+
+  function handleDivTipoPagamento(id: string){
+    getTransactionsByTipoPagamento(transactionsByFatura[0].fatura.observacao, id);
+  }
+
   return (
     <>
       {items &&
         items.map((item) => (
           <Container key={item.id}>
-            <div className="totalbytipopagamento">
+            <div className="totalbytipopagamento" onClick={() => {handleDivTipoPagamento(item.id)}}>
               <div className="header">
                 <p>{item.descricaoTipoPagamento}</p>
               </div>

@@ -9,6 +9,7 @@ interface TotalFatura {
   descricao: string,
   inicio: Date,
   fim: Date,
+  quantidade: number,
   total: number
 };
 
@@ -36,17 +37,23 @@ export function Summary() {
         descricao,
         inicio,
         fim,
+        quantidade: 0,
         total: 0
       };
+
+      let qntTotal = 0;
+
 
       transactionsByFatura.forEach(transaction => {
         if (transaction.fatura.observacao === item.descricao) {
           item.total += Number(transaction.valor);
+          item.quantidade += 1;
         }
       })
 
       if (item.total > 0)
         arrayAgrupadoPorFatura.push(item);
+
     });
 
     setItems(arrayAgrupadoPorFatura);
@@ -82,6 +89,7 @@ export function Summary() {
                     currency: "BRL",
                   }).format(item.total)}
                 </footer>
+                <strong>{item.quantidade}</strong>
               </div>
             ))}
         </Container>

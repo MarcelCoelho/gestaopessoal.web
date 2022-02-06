@@ -52,6 +52,13 @@ export const Container = styled.div`
       line-height: 2rem;
     }
 
+    strong {
+      display: flex;
+      justify-content: center;
+      font-weight: 400;
+      font-size: 0.8rem;
+    }
+
     &.highlight-background {
       background: var(--green);
       color: #fff;
