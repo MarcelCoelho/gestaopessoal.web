@@ -18,6 +18,11 @@ interface Transaction {
   quantidadeParcelas: number;
   fatura: {
     observacao: string;
+    orden: number;
+    fechada: boolean;
+    atual: boolean;
+    dataInicio: Date;
+    dataFinal: Date;
   };
   tipoPagamento: {
     descricao: string;
@@ -44,6 +49,8 @@ interface Fatura {
   usuarioModificacao: string;
   dataCriacao: Date;
   dataModificacao: Date;
+  fechada: boolean;
+  atual: boolean;
 }
 
 type TransactionInput = Omit<Transaction, "id" | "tipoPagamento" | "fatura" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
@@ -92,11 +99,14 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   async function createTransaction(transactionInput: TransactionInput) {
     const dateTransaction: Date = new Date(transactionInput.data);
 
-    var fatura: Fatura = getFatura(transactionInput.faturaId, 0);
-    let order = fatura.orden;
+    var faturaRecuperada: Fatura = getFatura(transactionInput.faturaId, 0);
+    let order = faturaRecuperada.orden;
 
-    if (transactionInput.quantidadeParcelas == 0 || transactionInput.quantidadeParcelas == undefined)
+    if (transactionInput.quantidadeParcelas === 0 || transactionInput.quantidadeParcelas === undefined)
+    {
+      transactionInput.numeroParcela = 1;
       transactionInput.quantidadeParcelas = 1;
+    }
 
     let contadorParcelas = transactionInput.numeroParcela;
 
@@ -108,6 +118,10 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       if (i > 1) {
         order += 1;
         fatura = getFatura(null, order);
+      }
+      else
+      {
+        fatura = faturaRecuperada;
       }
 
       let dateString = new Date(transactionPost.data).toUTCString();
@@ -163,10 +177,11 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     var array = [...transactions]; // make a separate copy of the array
 
     array = transactions.filter(function (transaction) {
-      return transaction.id != id;
+      return transaction.id !== id;
     });
 
     setTransactions(array);
+    await getTransacctions();
   }
 
   function removeAllTransactions() {
@@ -177,10 +192,14 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
     setActiveTransaction("fatura");
 
-    if (fatura != "null" && fatura != undefined) {
+    if (fatura !== null && fatura !== undefined) {
       var array = []; // make a separate copy of the array
 
+      const dataAtual = new Date();
       array = transactions.filter(function (transaction) {
+        transaction.fatura.atual =
+           (dataAtual  >= new Date(transaction.fatura.dataInicio) && 
+            dataAtual < new Date(transaction.fatura.dataFinal));
         return transaction.fatura.observacao === fatura;
       });
 
@@ -194,14 +213,14 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
   function getTransactionsByTipoPagamento(fatura: string, tipoPagamentoId: string) {
 
-    if (fatura != "null" && fatura != undefined) {
+    if (fatura !== "null" && fatura !== undefined) {
       var transactionByFatura = []; // make a separate copy of the array
 
       transactionByFatura = transactions.filter(function (transaction) {
         return transaction.fatura.observacao === fatura;
       });
 
-      if (tipoPagamentoId != "null" && tipoPagamentoId != undefined) {
+      if (tipoPagamentoId !== "null" && tipoPagamentoId !== undefined) {
         var transactionByTipoPagamento = []; // make a separate copy of the array
 
         transactionByTipoPagamento = transactionByFatura.filter(function (transaction) {

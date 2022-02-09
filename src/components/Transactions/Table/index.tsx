@@ -60,7 +60,7 @@ export function Table() {
 
   function handlePesquisar() {
 
-    if (paramPesquisa.trim() != "") {
+    if (paramPesquisa.trim() !== "") {
 
       let arrayItems = [];
       let itemEncontrado = false;
@@ -102,6 +102,38 @@ export function Table() {
     }
   }
 
+  function handleHeader(event) {
+
+    switch (event.target.innerText) {
+      case "Data":        
+        break;
+      case "Fatura":
+        // code block
+        break;
+      case "Fatura":
+        // code block
+        break;
+      case "Fatura":
+        // code block
+        break;
+      case "Fatura":
+        // code block
+        break;
+      case "Fatura":
+        // code block
+        break;
+      case "Fatura":
+        // code block
+        break;
+      case "Fatura":
+        // code block
+        break;
+      default:
+      // code block
+    }
+
+  }
+
   return (
     <Container>
       <input
@@ -112,7 +144,7 @@ export function Table() {
       <button type="submit" onClick={handlePesquisar} >IR</button>
       <table>
         <thead>
-          <tr>
+          <tr onClick={(event) => handleHeader(event)}>
             <th>Data</th>
             <th>Fatura</th>
             <th>Produto</th>

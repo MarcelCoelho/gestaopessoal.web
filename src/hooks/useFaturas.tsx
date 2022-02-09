@@ -20,9 +20,10 @@ interface Fatura {
   usuarioModificacao: string;
   dataCriacao: Date;
   dataModificacao: Date;
+  atual: boolean;
 }
 
-type FaturaInput = Omit<Fatura, "id" | "orden" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
+type FaturaInput = Omit<Fatura, "id" | "orden" | "atual" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
 interface FaturaProviderProps {
   children: ReactNode;
@@ -40,19 +41,25 @@ const FaturasContext = createContext<FaturasContextData>(
 );
 
 export function FaturasProvider({ children }: FaturaProviderProps) {
- 
+
   const [faturas, setFaturas] = useState<Fatura[]>([]);
 
   useEffect(() => {
-
-    async function getFaturas() {
-      const response = await api.get<Fatura[]>("/Faturas");
-      setFaturas(response.data);
-    }
-
     getFaturas();
-    
   }, []);
+
+  async function getFaturas() {
+    const response = await api.get<Fatura[]>("/Faturas");
+
+    let faturasTemp: Fatura[] = response.data;
+    const dataAtual = new Date();
+
+    faturasTemp.forEach(fat => {
+      fat.atual = (dataAtual >= new Date(fat.dataInicio) && dataAtual < new Date(fat.dataFinal));
+    });
+
+    setFaturas(faturasTemp);
+  }
 
   async function createFatura(FaturaInput: FaturaInput) {
     const response = await api.post("/Faturas", {

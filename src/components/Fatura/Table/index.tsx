@@ -2,7 +2,8 @@ import { useFaturas } from "../../../hooks/useFaturas";
 
 import { FiTrash, FiTrash2 } from "react-icons/fi";
 
-import { Container } from "./styles";
+import { Container, TR } from "./styles";
+import { Checkbox } from "@material-ui/core";
 
 export function Table() {
   const {
@@ -10,6 +11,7 @@ export function Table() {
     removeAllFaturas,
     removeFatura
   } = useFaturas();
+
 
   return (
     <Container>
@@ -34,16 +36,19 @@ export function Table() {
         <tbody>
           {faturas &&
             faturas.map((fatura) => (
-              <tr key={fatura.id}>
-                <td>{fatura.observacao}</td>               
-                <td>{fatura.mes + "/" + fatura.ano }</td>
+              <TR key={fatura.id}
+                  fechada={fatura.fechada} 
+                  atual={fatura.atual}>
+                    
+                <td>{fatura.observacao}</td>
+                <td>{fatura.mes + "/" + fatura.ano}</td>
                 <td>{new Intl.DateTimeFormat().format(
-                    new Date(fatura.dataInicio)
-                  )}</td>
-               <td>{new Intl.DateTimeFormat().format(
-                    new Date(fatura.dataFinal)
-                  )}</td>
-                  <td>{fatura.fechada}</td>  
+                  new Date(fatura.dataInicio)
+                )}</td>
+                <td>{new Intl.DateTimeFormat().format(
+                  new Date(fatura.dataFinal)
+                )}</td>
+                <td><Checkbox value={fatura.fechada} checked={fatura.fechada} /></td>
                 <td>
                   <FiTrash2
                     size="18"
@@ -52,7 +57,7 @@ export function Table() {
                     }}
                   />
                 </td>
-              </tr>
+              </TR>
             ))}
         </tbody>
       </table>

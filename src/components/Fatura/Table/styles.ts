@@ -1,5 +1,10 @@
 import styled from "styled-components";
 
+interface TRProps {
+  fechada: boolean;
+  atual: boolean;
+}
+
 export const Container = styled.div`
   margin-top: 4rem;
 
@@ -13,26 +18,21 @@ export const Container = styled.div`
       padding: 1rem 2rem;
       text-align: left;
       line-height: 1.5rem;
-    }
-
-    td {
-      padding: 1rem 2rem;
-      border: 0;
-      background: var(--shape);
-      color: var(--text-body);
-      border-radius: 0.25rem;
-
-      &:first-child {
-        color: var(--text-title);
-      }
-
-      &.deposit {
-        color: var(--green);
-      }
-
-      &.withdraw {
-        color: var(--red);
-      }
-    }
+    }    
   }
+`;
+
+export const TR = styled.tr<TRProps>`
+
+ td {
+  padding: 1rem 2rem;
+  border: 0;
+  background: var(--shape);
+  color: ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "var(--text-body)"))};
+  border-radius: 0.25rem;
+
+ checkbox {
+  backgorund-color: ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "var(--text-body)"))};
+ }
+}
 `;

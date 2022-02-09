@@ -3,12 +3,16 @@ import { useState, useEffect } from 'react';
 import { useTiposPagamentos } from '../../hooks/useTiposPagamentos';
 import { useTransactions } from '../../hooks/useTransactions';
 
-import { Container } from "./styles";
+import { Container, Component, Header, Footer } from "./styles";
 
 interface TotalFatura {
   id: string,
   descricaoTipoPagamento: string,
-  total: number
+  quantidade: number;
+  total: number,
+  fechada: boolean,
+  atual: boolean,
+  orden: number
 };
 
 export function TotalByTipoPagamento() {
@@ -27,48 +31,66 @@ export function TotalByTipoPagamento() {
   function getTotalByTipoPagamento() {
 
     tiposPagamentos.forEach(tp => {
+
       let item: TotalFatura = {
         id: tp.id,
         descricaoTipoPagamento: tp.descricao,
-        total: 0
+        quantidade: 0,
+        total: 0,
+        fechada: false,
+        atual: false,
+        orden: 0
       };
 
       transactionsByFatura.forEach(transaction => {
         if (transaction.tipoPagamentoId === item.id) {
           item.total += Number(transaction.valor);
+          item.quantidade += 1;
+          item.atual = transaction.fatura.atual;
+          item.fechada = transaction.fatura.fechada;
         }
       })
 
-      if (item.total > 0)
+      if (item !== undefined && item.total > 0)
         agrupadorFaturaByTipoPagamento.push(item);
     });
 
-    setItems(agrupadorFaturaByTipoPagamento);
+    if (agrupadorFaturaByTipoPagamento.length > 0) {
+      agrupadorFaturaByTipoPagamento.sort((a, b) => Number(b.total) - Number(a.total));
+      setItems(agrupadorFaturaByTipoPagamento);
+    }
+    else
+      setItems([]);
 
   }
 
-  function handleDivTipoPagamento(id: string){
+  function handleDivTipoPagamento(id: string) {
     getTransactionsByTipoPagamento(transactionsByFatura[0].fatura.observacao, id);
   }
 
   return (
     <>
-      {items &&
-        items.map((item) => (
-          <Container key={item.id}>
-            <div className="totalbytipopagamento" onClick={() => {handleDivTipoPagamento(item.id)}}>
-              <div className="header">
+      <Container>
+        {items &&
+          items.map((item) => (
+            <Component
+              key={item.id}
+              fechada={item.fechada}
+              atual={item.atual}
+              onClick={() => { handleDivTipoPagamento(item.id) }}>
+              <div className='header'>
                 <p>{item.descricaoTipoPagamento}</p>
+                <span>{item.quantidade}</span>
               </div>
-              <div className="footer">
+              <div className='footer' >
                 {new Intl.NumberFormat("pt-Br", {
                   style: "currency",
                   currency: "BRL",
                 }).format(item.total)}
               </div>
-            </div>
-          </Container>
-        ))}
+            </Component>
+          ))}
+      </Container>
     </>
   );
 }

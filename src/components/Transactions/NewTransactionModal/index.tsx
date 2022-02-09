@@ -5,13 +5,13 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 
 import DatePicker from 'react-datepicker';
-import {registerLocale} from 'react-datepicker';
+import { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/locale/pt';
 
 import closeImg from "../../../assets/close.svg";
 import { useTransactions } from "../../../hooks/useTransactions";
 
-import { Container} from "./styles";
+import { Container } from "./styles";
 import { useTiposPagamentos } from "../../../hooks/useTiposPagamentos";
 import { useFaturas } from "../../../hooks/useFaturas";
 
@@ -45,31 +45,32 @@ export function NewTransactionModal({
   const [faturaId, setFaturaId] = useState("");
   const [tipoPagamentoId, setTipoPagamentoId] = useState("");
 
-  useEffect(() => {    
-      getOptionsTipoPagamento();
-      getOptionsFatura();
+  useEffect(() => {
+    getOptionsTipoPagamento();
+    getOptionsFatura();
   }, [tiposPagamentos, faturas]);
 
-  function getOptionsTipoPagamento(){
+  function getOptionsTipoPagamento() {
     let optionsTemporary = []
 
     for (let i = 0; i < tiposPagamentos.length; ++i)
       optionsTemporary[i] = tiposPagamentos[i].descricao;
-      
+
     setOptionsTipoPagamento(optionsTemporary);
   }
 
-  function getOptionsFatura(){
+  function getOptionsFatura() {
     let optionsTemporary = []
 
     for (let i = 0; i < faturas.length; ++i)
-      optionsTemporary[i] = faturas[i].observacao;
-      
+      if (!faturas[i].fechada)
+        optionsTemporary[i] = faturas[i].observacao;
+
     setOptionsFatura(optionsTemporary);
   }
 
   function getFaturaId(value: string) {
-    for (let i = 0; i < faturas.length; ++i){
+    for (let i = 0; i < faturas.length; ++i) {
       if (faturas[i].observacao === value) {
         return faturas[i].id;
       }
@@ -77,7 +78,7 @@ export function NewTransactionModal({
   }
 
   function getTipoPagamentoId(value: string) {
-    for (let i = 0; i < tiposPagamentos.length; ++i){
+    for (let i = 0; i < tiposPagamentos.length; ++i) {
       if (tiposPagamentos[i].descricao === value) {
 
         return tiposPagamentos[i].id;
@@ -118,7 +119,7 @@ export function NewTransactionModal({
     setTipoPagamentoId("");
     onRequestClose();
   }
-  
+
   return (
     <Modal
       isOpen={isOpen}
@@ -135,78 +136,78 @@ export function NewTransactionModal({
       </button>
 
       <Container>
-      <form onSubmit={handleCreateNewTransaction}>
-        <h2>Cadastrar Transacao</h2>
+        <form onSubmit={handleCreateNewTransaction}>
+          <h2>Cadastrar Transacao</h2>
 
-        <DatePicker
-           placeholderText="Data"
-           locale="pt"           
-           selected={data}
-           onChange={(date: Date) => setData(date)}
-           dateFormat="dd/MM/yyyy">
-        </DatePicker>
+          <DatePicker
+            placeholderText="Data"
+            locale="pt"
+            selected={data}
+            onChange={(date: Date) => setData(date)}
+            dateFormat="dd/MM/yyyy">
+          </DatePicker>
 
-        <input
-          placeholder="Produto"
-          value={produto}
-          onChange={(event) => setProduto(event.target.value)}
-        ></input>
+          <input
+            placeholder="Produto"
+            value={produto}
+            onChange={(event) => setProduto(event.target.value)}
+          ></input>
 
-        <input
-          placeholder="Loja"
-          value={loja}
-          onChange={(event) => setLoja(event.target.value)}
-        ></input>
+          <input
+            placeholder="Loja"
+            value={loja}
+            onChange={(event) => setLoja(event.target.value)}
+          ></input>
 
-        <input
-          placeholder="Local"
-          value={local}
-          onChange={(event) => setLocal(event.target.value)}
-        ></input>
+          <input
+            placeholder="Local"
+            value={local}
+            onChange={(event) => setLocal(event.target.value)}
+          ></input>
 
-        <input
-          placeholder="N. Parcela"
-          type='text'
-          value={numeroParcela}
-          onChange={(event) => setNumeroParcela(Number(event.target.value))}
-        ></input>
+          <input
+            placeholder="N. Parcela"
+            type='text'
+            value={numeroParcela}
+            onChange={(event) => setNumeroParcela(Number(event.target.value))}
+          ></input>
 
-        <input
-          placeholder="Qnt. Parcela"
-          type="text"
-          value={quantidadeParcelas}
-          onChange={(event) => setQuantidadeParcelas(Number(event.target.value))}
-        ></input>
+          <input
+            placeholder="Qnt. Parcela"
+            type="text"
+            value={quantidadeParcelas}
+            onChange={(event) => setQuantidadeParcelas(Number(event.target.value))}
+          ></input>
 
-        <input
-          placeholder="Valor"
-          value={valor}
-          onChange={(event) => setValor(event.target.value)}
-        ></input>        
+          <input
+            placeholder="Valor"
+            value={valor}
+            onChange={(event) => setValor(event.target.value)}
+          ></input>
 
-        <Autocomplete
+          <Autocomplete
             options={optionsFatura}
             onChange={(event, value) => setFaturaId(value)}
             style={{ width: '100%', height: '100%', margin: '0.5rem 0 0.5rem 0' }}
             renderInput={(params) =>
-            <TextField {...params} label="Fatura" variant="outlined" />}
-        />
+              <TextField {...params} label="Fatura" variant="outlined" />}
+          />
 
-        <Autocomplete
+          <Autocomplete
             options={optionsTipoPagamento}
             onChange={(event, value) => setTipoPagamentoId(value)}
             style={{ width: '100%', height: '100%', margin: '0.5rem 0 0.5rem 0' }}
             renderInput={(params) =>
-            <TextField {...params} label="Tipo Pagamento" variant="outlined" />}
-        />
+              <TextField {...params} label="Tipo Pagamento" variant="outlined" />}
+          />
 
-        <input
-          placeholder="Observação"
-          value={observacao}
-          onChange={(event) => setObservacao(event.target.value)}
-        ></input>        
-      
-        <button type="submit">Cadastrar</button>
+          <input
+            placeholder="Observação"
+            value={observacao}
+            onChange={(event) => setObservacao(event.target.value)}
+          ></input>
+
+          <button type="submit">Cadastrar</button>
         </form>
       </Container>
     </Modal>
