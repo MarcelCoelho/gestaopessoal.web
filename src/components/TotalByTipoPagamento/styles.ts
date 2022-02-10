@@ -12,6 +12,7 @@ export const Container = styled.div`
 `;
 
 export const Component = styled.div<ComponentProps>`
+  cursor: pointer;
   margin: 0.5rem;
   width: 10rem;
   height: 4rem;

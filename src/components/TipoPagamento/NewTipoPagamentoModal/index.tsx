@@ -6,6 +6,8 @@ import { useTiposPagamentos } from "../../../hooks/useTiposPagamentos";
 
 import { Container } from "./styles";
 
+import { FiX } from 'react-icons/fi';
+
 interface NewTipoPagamentoModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
@@ -49,10 +51,10 @@ export function NewTipoPagamentoModal({
         onClick={onRequestClose}
         className="react-modal-close"
       >
-        <img src={closeImg} alt="Fechar Modal" />
+        <FiX size={20} stroke="#5429CC"/>
       </button>
 
-      <Container>
+      <Container className="contentModal">
       <form onSubmit={handleCreateNewTipoPagamento}>
         <h2>Cadastrar Tipo de Pagamento</h2>
 

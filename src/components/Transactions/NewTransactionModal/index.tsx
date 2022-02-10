@@ -9,9 +9,10 @@ import { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/locale/pt';
 
 import closeImg from "../../../assets/close.svg";
+import { FiX } from 'react-icons/fi';
 import { useTransactions } from "../../../hooks/useTransactions";
 
-import { Container } from "./styles";
+import { Content } from "./styles";
 import { useTiposPagamentos } from "../../../hooks/useTiposPagamentos";
 import { useFaturas } from "../../../hooks/useFaturas";
 
@@ -127,17 +128,21 @@ export function NewTransactionModal({
       overlayClassName="react-modal-overlay"
       className="react-modal-content"
     >
+
+      <h2>Cadastrar Transação</h2>
+
       <button
         type="button"
         onClick={onRequestClose}
         className="react-modal-close"
       >
-        <img src={closeImg} alt="Fechar Modal" />
+
+        <FiX size={24} stroke="#5429CC"/>
       </button>
 
-      <Container>
+      <Content className="contentModal">
+
         <form onSubmit={handleCreateNewTransaction}>
-          <h2>Cadastrar Transacao</h2>
 
           <DatePicker
             placeholderText="Data"
@@ -209,7 +214,7 @@ export function NewTransactionModal({
 
           <button type="submit">Cadastrar</button>
         </form>
-      </Container>
+      </Content>
     </Modal>
   );
 }

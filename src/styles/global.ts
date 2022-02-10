@@ -37,6 +37,16 @@ export const GlobalStyle = createGlobalStyle`
       background: black;
     }
 
+    .contentModal {
+      height: 20rem;
+      width: 30rem;
+      margin: 1rem;
+
+      .input {
+        height: 2rem;
+      }
+    }
+
    }
 
  }
@@ -64,6 +74,78 @@ export const GlobalStyle = createGlobalStyle`
   cursor: not-allowed;
 }
 
+body::-webkit-scrollbar {
+  width: 1rem;               /* width of the entire scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--shape);        /* color of the tracking area */
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--blue);    /* color of the scroll thumb */  
+  border: 0.1rem solid orange;  /* creates padding around scroll thumb */
+}
+
+.contentModal {
+  height: 40rem;
+  font-size: 1rem;
+  overflow: auto;
+
+  ::-webkit-scrollbar {
+    width: 0.7rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--shape);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--blue);    /* color of the scroll thumb */      
+    border: 0.1rem solid orange;  /* creates padding around scroll thumb */
+  }
+
+  form {
+    
+    input {
+      margin-top: 0.3rem;
+      width: 100%;
+      padding: 0 1.5rem;
+      height: 2.5rem;
+      border-radius: 0.25rem;
+
+      border: 0.1rem solid var(--border-botton);
+      background: #e7e9ee;
+
+      font-weight: 400;
+      font-size: 0.8rem;
+
+      &::placeholder {
+        color: var(--text-body);
+      }
+ 
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0 1.5rem;
+      height: 4rem;
+      background: var(--green);
+      color: var(--shape);
+      border-radius: 0.25rem;
+      border: 0.1rem solid var(--blue);
+      font-size: 1rem;
+      margin-top: 1.5rem;
+      font-weight: 600;
+
+      transition: filter 0.2s;
+
+      &:hover {
+        filter: brightness(0.9);
+      }
+    }
+  }
+}
 
 .react-modal-overlay {
   background: rgba(0,0,0,0.5);
@@ -85,6 +167,9 @@ export const GlobalStyle = createGlobalStyle`
   padding: 3rem;
   position: relative;
   border-radius: 0.25rem;
+  border: 0.1rem solid var(--blue);
+  margin: 1rem;
+  padding: 1rem;
 }
 
 .react-modal-close {
@@ -93,6 +178,7 @@ export const GlobalStyle = createGlobalStyle`
   top: 1.5rem;
   border: 0;
   background: transparent;
+  text-color: var(--blue);
 
   transition: filter 0.2s;
 

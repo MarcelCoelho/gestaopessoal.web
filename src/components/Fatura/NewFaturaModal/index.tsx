@@ -7,11 +7,12 @@ import pt from 'date-fns/locale/pt';
 
 import Modal from "react-modal";
 
-import closeImg from "../../../assets/close.svg";
 import { useFaturas } from "../../../hooks/useFaturas";
 
 import { Container } from "./styles";
 import { Checkbox } from "@material-ui/core";
+
+import { FiX } from 'react-icons/fi';
 
 registerLocale('pt', pt)
 
@@ -67,10 +68,10 @@ export function NewFaturaModal({
         onClick={onRequestClose}
         className="react-modal-close"
       >
-        <img src={closeImg} alt="Fechar Modal" />
+        <FiX size={20} stroke="#5429CC"/>
       </button>
 
-      <Container>
+      <Container className="contentModal">
       <form onSubmit={handleCreateNewTipoPagamento}>
         <h2>Cadastrar Fatura</h2>
 
