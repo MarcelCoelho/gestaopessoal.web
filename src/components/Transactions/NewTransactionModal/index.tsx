@@ -8,7 +8,6 @@ import DatePicker from 'react-datepicker';
 import { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/locale/pt';
 
-import closeImg from "../../../assets/close.svg";
 import { FiX } from 'react-icons/fi';
 import { useTransactions } from "../../../hooks/useTransactions";
 
@@ -49,6 +48,7 @@ export function NewTransactionModal({
   useEffect(() => {
     getOptionsTipoPagamento();
     getOptionsFatura();
+
   }, [tiposPagamentos, faturas]);
 
   function getOptionsTipoPagamento() {
@@ -58,16 +58,24 @@ export function NewTransactionModal({
       optionsTemporary[i] = tiposPagamentos[i].descricao;
 
     setOptionsTipoPagamento(optionsTemporary);
+    setTipoPagamentoId("Crédito");
   }
 
   function getOptionsFatura() {
     let optionsTemporary = []
+    let optionAtual: string = null;
 
     for (let i = 0; i < faturas.length; ++i)
-      if (!faturas[i].fechada)
+    {
+      if (!faturas[i].fechada)      
         optionsTemporary[i] = faturas[i].observacao;
+      
+      if (faturas[i].atual)
+        optionAtual = faturas[i].observacao;
+    }
 
     setOptionsFatura(optionsTemporary);
+    setFaturaId(optionAtual);
   }
 
   function getFaturaId(value: string) {
@@ -137,7 +145,7 @@ export function NewTransactionModal({
         className="react-modal-close"
       >
 
-        <FiX size={24} stroke="#5429CC"/>
+        <FiX size={24} stroke="#5429CC" />
       </button>
 
       <Content className="contentModal">
@@ -192,16 +200,21 @@ export function NewTransactionModal({
 
           <Autocomplete
             options={optionsFatura}
+            value={faturaId}
             onChange={(event, value) => setFaturaId(value)}
-            style={{ width: '100%', height: '100%', margin: '0.5rem 0 0.5rem 0' }}
+            style={{ width: '100%', height: '100%', marginTop: '0.7rem' }}
             renderInput={(params) =>
               <TextField {...params} label="Fatura" variant="outlined" />}
           />
 
           <Autocomplete
             options={optionsTipoPagamento}
-            onChange={(event, value) => setTipoPagamentoId(value)}
-            style={{ width: '100%', height: '100%', margin: '0.5rem 0 0.5rem 0' }}
+            value={tipoPagamentoId}          
+            onChange={(event, value) => {
+              setTipoPagamentoId(value)
+              console.log(value);
+            }}
+            style={{ width: '100%', height: '100%', marginTop: '0.7rem' }}
             renderInput={(params) =>
               <TextField {...params} label="Tipo Pagamento" variant="outlined" />}
           />

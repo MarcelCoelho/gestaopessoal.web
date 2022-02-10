@@ -58,5 +58,9 @@ export const Content = styled.div`
         filter: brightness(0.9);
       }
     }
+
+    .MuiInputBase-input MuiOutlinedInput-input MuiAutocomplete-input MuiAutocomplete-inputFocused MuiInputBase-inputAdornedEnd MuiOutlinedInput-inputAdornedEnd {
+      background: blue;
+    }
   }
 `;
