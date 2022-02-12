@@ -4,6 +4,6 @@ export const Container = styled.div`
   margin-top: 4rem;
 
   table {
-    width: 100%; 
+    width: 100%;
   }
 `;

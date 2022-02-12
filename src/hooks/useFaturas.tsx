@@ -30,10 +30,12 @@ interface FaturaProviderProps {
 }
 
 interface FaturasContextData {
-  faturas: Fatura[];
+  faturas: Fatura[]; 
   createFatura: (fatura: FaturaInput) => Promise<void>;
   removeFatura: (id: string) => void;
   removeAllFaturas: () => void;
+  updateTipoPagamentoOn: (descricao: string) => void; 
+  tipoPagamentoOn: string;
 }
 
 const FaturasContext = createContext<FaturasContextData>(
@@ -43,6 +45,7 @@ const FaturasContext = createContext<FaturasContextData>(
 export function FaturasProvider({ children }: FaturaProviderProps) {
 
   const [faturas, setFaturas] = useState<Fatura[]>([]);
+  const [tipoPagamentoOn, setTipoPagamentoOn] = useState("");
 
   useEffect(() => {
     getFaturas();
@@ -87,13 +90,19 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
     setFaturas([]);
   }
 
+  function updateTipoPagamentoOn(descricao: string){
+    setTipoPagamentoOn(descricao);
+  }
+
   return (
     <FaturasContext.Provider
       value={{
-        faturas,
+        faturas,        
         createFatura,
         removeFatura,
         removeAllFaturas,
+        updateTipoPagamentoOn,
+        tipoPagamentoOn
       }}
     >
       {children}

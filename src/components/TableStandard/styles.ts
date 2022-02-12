@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const ContainerTable = styled.div`
     
     margin: 0.3rem auto;
-    height: 29rem;
+    height: 27rem;
     overflow: auto;
 
     ::-webkit-scrollbar {
@@ -20,9 +20,8 @@ export const ContainerTable = styled.div`
     }
     
     table {
-      width: 100%;
       margin: -0.5rem auto;
-      border-spacing: 0 0.3rem;      
+      border-spacing: 0 0.3rem;
 
       th {
         width: 6rem;

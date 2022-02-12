@@ -42,6 +42,7 @@ export function NewTransactionModal({
   const [quantidadeParcelas, setQuantidadeParcelas] = useState<number>();
   const [valor, setValor] = useState("");
   const [observacao, setObservacao] = useState("");
+
   const [faturaId, setFaturaId] = useState("");
   const [tipoPagamentoId, setTipoPagamentoId] = useState("");
 
@@ -58,24 +59,17 @@ export function NewTransactionModal({
       optionsTemporary[i] = tiposPagamentos[i].descricao;
 
     setOptionsTipoPagamento(optionsTemporary);
-    setTipoPagamentoId("Crédito");
   }
 
   function getOptionsFatura() {
     let optionsTemporary = []
-    let optionAtual: string = null;
 
-    for (let i = 0; i < faturas.length; ++i)
-    {
-      if (!faturas[i].fechada)      
-        optionsTemporary[i] = faturas[i].observacao;
-      
-      if (faturas[i].atual)
-        optionAtual = faturas[i].observacao;
+    for (let i = 0; i < faturas.length; ++i) {
+      if (!faturas[i].fechada)
+        optionsTemporary[i] = faturas[i].observacao;      
     }
 
     setOptionsFatura(optionsTemporary);
-    setFaturaId(optionAtual);
   }
 
   function getFaturaId(value: string) {
@@ -103,8 +97,11 @@ export function NewTransactionModal({
 
     const _valor = Number.parseFloat(valor).toFixed(2);
 
+      const newDate = new Date(data);
+
     await createTransaction({
-      data,
+      data: newDate,
+      dataTexto: newDate.toDateString(),
       produto,
       loja,
       local,
@@ -155,8 +152,8 @@ export function NewTransactionModal({
           <DatePicker
             placeholderText="Data"
             locale="pt"
-            selected={data}
-            onChange={(date: Date) => setData(date)}
+            selected={new Date(data)}
+            onChange={(date: Date) => setData(new Date(date))}
             dateFormat="dd/MM/yyyy">
           </DatePicker>
 
@@ -200,7 +197,6 @@ export function NewTransactionModal({
 
           <Autocomplete
             options={optionsFatura}
-            value={faturaId}
             onChange={(event, value) => setFaturaId(value)}
             style={{ width: '100%', height: '100%', marginTop: '0.7rem' }}
             renderInput={(params) =>
@@ -209,10 +205,8 @@ export function NewTransactionModal({
 
           <Autocomplete
             options={optionsTipoPagamento}
-            value={tipoPagamentoId}          
             onChange={(event, value) => {
               setTipoPagamentoId(value)
-              console.log(value);
             }}
             style={{ width: '100%', height: '100%', marginTop: '0.7rem' }}
             renderInput={(params) =>

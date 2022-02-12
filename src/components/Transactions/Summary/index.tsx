@@ -1,42 +1,37 @@
 import { useTransactions } from '../../../hooks/useTransactions';
 import { useFaturas } from '../../../hooks/useFaturas';
-import { TotalByTipoPagamento } from '../../../components/TotalByTipoPagamento';
+import { useTiposPagamentos } from '../../../hooks/useTiposPagamentos';
+import { SumByPaymentType } from '../../../components/SumByPaymentType';
 
-import { FiArrowLeftCircle, FiArrowRightCircle } from 'react-icons/fi';
 
-import { Content, Component } from "./styles";
+import { Content, Component, ContentTipoPagamento } from "./styles";
 import { useEffect, useState } from 'react';
 
-interface TotalFatura {
-  descricao: string,
-  inicio: Date,
-  fim: Date,
-  fechada: boolean,
-  atual: boolean,
-  orden: number,
-  quantidade: number,
-  total: number
-};
+import { TotalFatura } from '../../../types';
 
 export function Summary() {
   const { transactionsByFatura, getTransactionsByFatura } = useTransactions();
-  const { faturas } = useFaturas();
+  const { faturas, updateTipoPagamentoOn } = useFaturas();
+  const { tiposPagamentos } = useTiposPagamentos();
 
   const [items, setItems] = useState<TotalFatura[]>([]);
   const [itemSelecionado, setItemSelecionado] = useState("");
+
+  const [itemsPagamentos, setItemsPagamentos] = useState<TotalFatura[]>([]);
 
   const [filtro, setFiltro] = useState("");
 
   useEffect(() => {
     getTotalPorFatura();
+    getTotalByTipoPagamento();
   }, [transactionsByFatura])
 
   let arrayAgrupadoPorFatura: TotalFatura[] = [];
-  let faturaAnterior1: TotalFatura;
-  let faturaAnterior2: TotalFatura;
-  let faturaProxima: TotalFatura;
+  let agrupadorFaturaByTipoPagamento: TotalFatura[] = [];
 
   function arrayByFatura() {
+
+    let idNumber = 1;
     faturas.forEach(fatura => {
       const descricao = fatura.observacao;
       const inicio = fatura.dataInicio;
@@ -46,6 +41,7 @@ export function Summary() {
       const orden = fatura.orden;
 
       let item: TotalFatura = {
+        id: (idNumber).toString(),
         descricao,
         inicio,
         fim,
@@ -55,6 +51,8 @@ export function Summary() {
         quantidade: 0,
         total: 0
       };
+
+      idNumber++;
 
       transactionsByFatura.forEach(transaction => {
         if (transaction.fatura.observacao === item.descricao) {
@@ -84,48 +82,11 @@ export function Summary() {
         return (arr.orden === faturaAtual[0].orden - 1);
       });
 
-      arrayAgrupadoPorFatura.forEach(arr => {
-        if (arr.orden === faturaAtual[0].orden - 1) {
-          faturaAnterior1 = {
-            inicio: arr.inicio,
-            fim: arr.fim,
-            atual: arr.atual,
-            descricao: arr.descricao,
-            fechada: arr.fechada,
-            orden: arr.orden,
-            quantidade: arr.quantidade,
-            total: arr.total
-          }
-        }
-        else if (arr.orden === faturaAtual[0].orden - 2) {
-          faturaAnterior2 = {
-            inicio: arr.inicio,
-            fim: arr.fim,
-            atual: arr.atual,
-            descricao: arr.descricao,
-            fechada: arr.fechada,
-            orden: arr.orden,
-            quantidade: arr.quantidade,
-            total: arr.total
-          }
-        }
-      });
+
 
       arrayAgrupadoPorFatura.forEach(arr => {
         if (arr.orden > faturaAtual[0].orden && arr.orden <= faturaAtual[0].orden + 3) {
           arrayFiltrado.push(arr);
-        }
-        else if (arr.orden == faturaAtual[0].orden + 4) {
-          faturaProxima = {
-            inicio: arr.inicio,
-            fim: arr.fim,
-            atual: arr.atual,
-            descricao: arr.descricao,
-            fechada: arr.fechada,
-            orden: arr.orden,
-            quantidade: arr.quantidade,
-            total: arr.total
-          }
         }
       });
 
@@ -159,6 +120,7 @@ export function Summary() {
       setItemSelecionado(descricao);
       getTransactionsByFatura(descricao);
     }
+    updateTipoPagamentoOn(null);
   }
 
   function handleNext() {
@@ -202,45 +164,90 @@ export function Summary() {
     }
   }
 
-  return (
-    <>
-      <Content>
+  function getTotalByTipoPagamento() {
 
-        <button onClick={handlePrevious}>
-          <span>{'<'}</span>
-        </button>
+    tiposPagamentos.forEach(tp => {
 
-        {items.length > 0 &&
-          items.map((item) => (
-            <Component fechada={item.fechada} atual={item.atual} key={item.descricao} onClick={() => handleDivFatura(item.descricao)}>
-              <div>
-                <header>
-                  <p>{item.descricao}</p>
-                </header>
-                <main>
-                  <p> {new Intl.DateTimeFormat().format(new Date(item.inicio))}-{new Intl.DateTimeFormat().format(new Date(item.fim))}   </p>
-                </main>
-                <footer>
-                  {new Intl.NumberFormat("pt-Br", {
-                    style: "currency",
-                    currency: "BRL",
-                  }).format(item.total)}
-                </footer>
-                <strong>{item.quantidade}</strong>
-              </div>
-            </Component>
-          ))}
+      let item: TotalFatura = {
+        id: tp.id,
+        fim: new Date(),
+        inicio: new Date(),
+        descricao: tp.descricao,
+        quantidade: 0,
+        total: 0,
+        fechada: false,
+        atual: false,
+        orden: 0
+      };
 
-        {!filtro &&
-          <button onClick={handleNext}>
-            <span>{'>'}</span>
-          </button>
+      transactionsByFatura.forEach(transaction => {
+        if (transaction.tipoPagamentoId === item.id) {
+          item.total += Number(transaction.valor);
+          item.quantidade += 1;
+          item.atual = transaction.fatura.atual;
+          item.fechada = transaction.fatura.fechada;
         }
-        {itemSelecionado &&
-          (
-            <TotalByTipoPagamento />
-          )}
-      </Content>
-    </>
+      })
+
+      if (item !== undefined && item.total > 0)
+        agrupadorFaturaByTipoPagamento.push(item);
+    });
+
+    if (agrupadorFaturaByTipoPagamento.length > 0) {
+      agrupadorFaturaByTipoPagamento.sort((a, b) => Number(b.total) - Number(a.total));
+
+      if (filtro !== "" && filtro !== null && filtro !== undefined)
+        setItemsPagamentos(agrupadorFaturaByTipoPagamento);
+      else
+        setItemsPagamentos([]);
+    }
+    else
+      setItemsPagamentos([]);
+
+  }
+
+  return (
+
+    <Content>
+
+      <button onClick={handlePrevious}>
+        <span>{'<'}</span>
+      </button>
+
+      {items.length > 0 &&
+        items.map((item) => (
+          <Component fechada={item.fechada} atual={item.atual} key={item.descricao} onClick={() => handleDivFatura(item.descricao)}>
+            <div>
+              <header>
+                <p>{item.descricao}</p>
+              </header>
+              <main>
+                <p> {new Intl.DateTimeFormat().format(new Date(item.inicio))}-{new Intl.DateTimeFormat().format(new Date(item.fim))}   </p>
+              </main>
+              <footer>
+                {new Intl.NumberFormat("pt-Br", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(item.total)}
+              </footer>
+              <strong>{item.quantidade}</strong>
+            </div>
+          </Component>
+        ))}
+
+      {!filtro &&
+        <button onClick={handleNext}>
+          <span>{'>'}</span>
+        </button>
+      }
+
+      <ContentTipoPagamento>
+        {itemsPagamentos.length > 0 &&
+          itemsPagamentos.map((totalFatura) => (
+            <SumByPaymentType key={totalFatura.id} totalFatura={totalFatura} />
+          ))}
+      </ContentTipoPagamento>
+    </Content>
+
   );
 }

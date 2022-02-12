@@ -2,9 +2,8 @@ import { useTransactions } from "../../../hooks/useTransactions";
 
 import { FiTrash, FiTrash2 } from "react-icons/fi";
 
-import { Container, Search } from "./styles";
+import { Container, Search, Barra, Total, ContentTable } from "./styles";
 import { useEffect, useState } from "react";
-
 import { TableStandard } from '../../TableStandard';
 
 interface Transaction {
@@ -41,8 +40,8 @@ export function Table() {
   } = useTransactions();
 
   const [items, setItems] = useState<Transaction[]>([]);
-
   const [paramPesquisa, setParamPesquisa] = useState("");
+  const [amount, setAmount] = useState(0);
 
   useEffect(() => {
     setItemsByFaturaOrTipoPagamento();
@@ -50,10 +49,15 @@ export function Table() {
   }, [activeTransaction, transactionsByFatura, transactionsByTipoPagamento])
 
   function setItemsByFaturaOrTipoPagamento() {
-    if (activeTransaction === "fatura")
+    if (activeTransaction === "fatura") {
       setItems(transactionsByFatura);
-    else
+      SumTransactions(transactionsByFatura);
+    }
+    else {
       setItems(transactionsByTipoPagamento);
+      SumTransactions(transactionsByTipoPagamento);
+    }
+
   }
 
   function indexOf(valor: string) {
@@ -64,7 +68,7 @@ export function Table() {
 
     if (paramPesquisa.trim() !== "") {
 
-      let arrayItems = [];
+      let arrayItems: Transaction[] = [];
       let itemEncontrado = false;
 
       items.forEach((item) => {
@@ -81,10 +85,13 @@ export function Table() {
         if (indexOf(item.observacao))
           itemEncontrado = true;
 
-        if (item.valor === paramPesquisa)
+        if (indexOf(item.tipoPagamento.descricao))
           itemEncontrado = true;
 
-        if (new Date(item.data) === new Date(paramPesquisa))
+        if (Number(item.valor) === Number(paramPesquisa))
+          itemEncontrado = true;
+
+        if (new Date(item.data).getDate() === new Date(paramPesquisa).getDate())
           itemEncontrado = true;
 
         if (itemEncontrado)
@@ -94,8 +101,10 @@ export function Table() {
 
       });
 
-      if (arrayItems.length > 0)
+      if (arrayItems.length > 0) {
         setItems(arrayItems);
+        SumTransactions(arrayItems);
+      }
 
       setParamPesquisa("");
     }
@@ -104,76 +113,100 @@ export function Table() {
     }
   }
 
+  function SumTransactions(array: Transaction[]) {
+    if (array !== undefined && array.length > 0) {
+      let sumAmount: number = 0;
+      array.forEach(transaction => {
+        sumAmount += Number(transaction.valor);
+      });
+      setAmount(sumAmount);
+    }
+    else {
+      setAmount(0);
+    }
+  }
+
   return (
     <>
       <Container>
-        <Search>
-          <input
-            placeholder="Começe a escrever para pesquisar..."
-            value={paramPesquisa}
-            onChange={(event) => setParamPesquisa(event.target.value)}
-          />
-          <button type="submit" onClick={handlePesquisar} >IR</button>
-        </Search>
 
-        <TableStandard>
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Fatura</th>
-                <th>Produto</th>
-                <th>Loja</th>
-                <th>Local</th>
-                <th>Parcelas</th>
-                <th>Forma Pagto</th>
-                <th>Valor</th>
-                <th>Observação</th>
-                <th className="close">
-                  <FiTrash
-                    size="20"
-                    onClick={() => {
-                      removeAllTransactions();
-                    }}
-                  />
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+        <Barra>
+          <Search>
+            <input
+              placeholder="Começe a escrever para pesquisar..."
+              value={paramPesquisa}
+              onChange={(event) => setParamPesquisa(event.target.value)}
+            />
+            <button type="submit" onClick={handlePesquisar} >IR</button>
 
-              {items &&
-                items.map((transaction) => (
-                  <tr key={transaction.id}>
-                    <td>
-                      {new Intl.DateTimeFormat().format(
-                        new Date(transaction.data)
-                      )}
-                    </td>
-                    <td>{transaction.fatura.observacao}</td>
-                    <td>{transaction.produto}</td>
-                    <td>{transaction.loja}</td>
-                    <td>{transaction.local}</td>
-                    <td>{(transaction.numeroParcela !== 0 && (transaction.numeroParcela + "/" + transaction.quantidadeParcelas))}</td>
-                    <td>{transaction.tipoPagamento.descricao}</td>
-                    <td>{new Intl.NumberFormat("pt-Br", {
-                      style: "currency",
-                      currency: "BRL",
-                    }).format(Number(transaction.valor))}</td>
-                    <td className="obs">{transaction.observacao}</td>
-                    <td className="close">
-                      <FiTrash2
-                        size="18"
-                        onClick={() => {
-                          removeTransaction(transaction.id);
-                        }}
-                      />
-                    </td>
-                  </tr>
-                ))}
+          </Search>
+          <Total>
+            <span>{new Intl.NumberFormat("pt-Br", {
+              style: "currency",
+              currency: "BRL",
+            }).format(Number(amount))}</span>
+          </Total>
+        </Barra>
+        <ContentTable>
+          <TableStandard>
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Fatura</th>
+                  <th>Produto</th>
+                  <th>Loja</th>
+                  <th>Local</th>
+                  <th>Parcelas</th>
+                  <th>Forma Pagto</th>
+                  <th>Valor</th>
+                  <th>Observação</th>
+                  <th className="close">
+                    <FiTrash
+                      size="20"
+                      onClick={() => {
+                        removeAllTransactions();
+                      }}
+                    />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
 
-            </tbody>
-          </table>
-        </TableStandard>
+                {items &&
+                  items.map((transaction) => (
+                    <tr key={transaction.id}>
+                      <td>
+                        {new Intl.DateTimeFormat().format(
+                          new Date(transaction.data)
+                        )}
+                      </td>
+                      <td>{transaction.fatura.observacao}</td>
+                      <td>{transaction.produto}</td>
+                      <td>{transaction.loja}</td>
+                      <td>{transaction.local}</td>
+                      <td>{(transaction.numeroParcela !== 0 && (transaction.numeroParcela + "/" + transaction.quantidadeParcelas))}</td>
+                      <td>{transaction.tipoPagamento.descricao}</td>
+                      <td>{new Intl.NumberFormat("pt-Br", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(Number(transaction.valor))}</td>
+                      <td className="obs">{transaction.observacao}</td>
+                      <td className="close">
+                        <FiTrash2
+                          size="18"
+                          onClick={() => {
+                            removeTransaction(transaction.id);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+
+              </tbody>
+            </table>
+          </TableStandard>
+        </ContentTable>
       </Container>
     </>
   );

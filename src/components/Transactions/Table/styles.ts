@@ -1,18 +1,18 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
+ display: flex;
+ flex-direction: column;
+ margin-top: 3rem;
+`;
 
-    display: flex;
-    flex-direction: column;
-    margin-top: 3rem;  
-   
+export const Barra = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 export const Search = styled.div`
-
-  margin: 0 auto;
   
-
   input {
     width: 25rem;
     height: 3rem;
@@ -40,7 +40,20 @@ export const Search = styled.div`
       filter: brightness(0.8);
       border: 2px solid #04d361;
     }}
-
 `;
 
+export const Total = styled.div`
+    span {
+      font-size: 1.7rem;
+      padding: 0.5rem;
+      color: var(--blue);
+    }
+`;
 
+export const ContentTable = styled.div`
+margin-top: 0.5rem;
+
+  table {
+    width: 100%;
+  }
+`;

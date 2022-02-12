@@ -3,13 +3,9 @@ import styled from "styled-components";
 interface ComponentProps {
   fechada: boolean;
   atual: boolean;
+  active: boolean;
 }
 
-export const Container = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  padding: 1rem;
-`;
 
 export const Component = styled.div<ComponentProps>`
   cursor: pointer;
@@ -17,14 +13,14 @@ export const Component = styled.div<ComponentProps>`
   width: 10rem;
   height: 4rem;
   
-  background: var(--shape);
+  background: ${(props) => props.active ? (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "gray")): "var(--shape)"};
   border-radius: 1rem;
   border: solid 0.15rem;
-  border-color: ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "gray"))};
+  border-color: ${(props) => props.active ? "var(--black)" : (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "var(--cinza)"))};
 
   &:hover {
-    background:  ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "gray"))};
-    border-color: black;
+    background:  ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "var(--cinza)"))};
+    border-color: var(--black);
     filter: brightness(0.8);
   } 
    

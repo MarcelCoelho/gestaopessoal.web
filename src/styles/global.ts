@@ -15,6 +15,8 @@ export const GlobalStyle = createGlobalStyle`
     --border-botton: #d7d7d7;
     --green-light: #3CB371;
     --red-tomato: #FF6347;
+    --black: #000;
+    --cinza: gray;
   }
   
   * {

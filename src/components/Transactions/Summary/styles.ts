@@ -9,7 +9,6 @@ export const Content = styled.div`
 margin-top: -10rem;  
 display: flex;
 align-items: center;
-flex-wrap: wrap;
 
   button {
     border: none;
@@ -90,4 +89,10 @@ export const Component = styled.div<ContainerProps>`
   }
 }
 
+`;
+
+export const ContentTipoPagamento = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1rem;    
 `;

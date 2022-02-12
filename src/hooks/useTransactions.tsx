@@ -8,50 +8,7 @@ import {
 import { api } from "../services/api";
 import { useFaturas } from "./useFaturas";
 
-interface Transaction {
-  id: string;
-  data: Date;
-  produto: string;
-  loja: string;
-  local: string;
-  numeroParcela: number;
-  quantidadeParcelas: number;
-  fatura: {
-    observacao: string;
-    orden: number;
-    fechada: boolean;
-    atual: boolean;
-    dataInicio: Date;
-    dataFinal: Date;
-  };
-  tipoPagamento: {
-    descricao: string;
-  };
-  valor: string;
-  observacao: string;
-  faturaId: string
-  tipoPagamentoId: string;
-  usuarioCriacao: string;
-  usuarioModificacao: string;
-  dataCriacao: Date;
-  dataModificacao: Date;
-}
-
-interface Fatura {
-  id: string;
-  mes: string;
-  ano: string;
-  dataInicio: Date;
-  dataFinal: Date;
-  orden: number;
-  observacao: string;
-  usuarioCriacao: string;
-  usuarioModificacao: string;
-  dataCriacao: Date;
-  dataModificacao: Date;
-  fechada: boolean;
-  atual: boolean;
-}
+import { Transaction, Fatura } from '../types';
 
 type TransactionInput = Omit<Transaction, "id" | "tipoPagamento" | "fatura" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
@@ -91,7 +48,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     setTransactionsByFatura(response.data);
   }
 
-  useEffect(() => {    
+  useEffect(() => {
     getTransacctions();
 
   }, []);
@@ -102,8 +59,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     var faturaRecuperada: Fatura = getFatura(transactionInput.faturaId, 0);
     let order = faturaRecuperada.orden;
 
-    if (transactionInput.quantidadeParcelas === 0 || transactionInput.quantidadeParcelas === undefined)
-    {
+    if (transactionInput.quantidadeParcelas === 0 || transactionInput.quantidadeParcelas === undefined) {
       transactionInput.numeroParcela = 1;
       transactionInput.quantidadeParcelas = 1;
     }
@@ -119,8 +75,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
         order += 1;
         fatura = getFatura(null, order);
       }
-      else
-      {
+      else {
         fatura = faturaRecuperada;
       }
 
@@ -131,6 +86,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
       transactionPost.numeroParcela = contadorParcelas;
       transactionPost.data = addData(dateTransaction, i);
+      transactionPost.dataTexto = transactionPost.data.toDateString();
       transactionPost.faturaId = fatura.id;
 
       const response = await api.post("/items",
@@ -144,7 +100,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
       setTransactions([...transactions, transaction]);
       await getTransacctions();
-      contadorParcelas ++;
+      contadorParcelas++;
     }
   }
 
@@ -198,7 +154,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       const dataAtual = new Date();
       array = transactions.filter(function (transaction) {
         transaction.fatura.atual =
-           (dataAtual  >= new Date(transaction.fatura.dataInicio) && 
+          (dataAtual >= new Date(transaction.fatura.dataInicio) &&
             dataAtual < new Date(transaction.fatura.dataFinal));
         return transaction.fatura.observacao === fatura;
       });
