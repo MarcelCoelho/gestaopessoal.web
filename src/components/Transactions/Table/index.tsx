@@ -4,7 +4,6 @@ import { FiTrash, FiTrash2 } from "react-icons/fi";
 
 import { Container, Search, Barra, Total, ContentTable } from "./styles";
 import { useEffect, useState } from "react";
-import { TableStandard } from '../../TableStandard';
 
 interface Transaction {
   id: string;
@@ -37,6 +36,7 @@ export function Table() {
     activeTransaction,
     removeTransaction,
     removeAllTransactions,
+    errorApi
   } = useTransactions();
 
   const [items, setItems] = useState<Transaction[]>([]);
@@ -45,7 +45,6 @@ export function Table() {
 
   useEffect(() => {
     setItemsByFaturaOrTipoPagamento();
-
   }, [activeTransaction, transactionsByFatura, transactionsByTipoPagamento])
 
   function setItemsByFaturaOrTipoPagamento() {
@@ -129,84 +128,95 @@ export function Table() {
   return (
     <>
       <Container>
+        {items.length > 0 &&
+          <Barra>
+            <Search>
+              <input
+                placeholder="Começe a escrever para pesquisar..."
+                value={paramPesquisa}
+                onChange={(event) => setParamPesquisa(event.target.value)}
+              />
+              <button type="submit" onClick={handlePesquisar} >IR</button>
 
-        <Barra>
-          <Search>
-            <input
-              placeholder="Começe a escrever para pesquisar..."
-              value={paramPesquisa}
-              onChange={(event) => setParamPesquisa(event.target.value)}
-            />
-            <button type="submit" onClick={handlePesquisar} >IR</button>
-
-          </Search>
-          <Total>
-            <span>{new Intl.NumberFormat("pt-Br", {
-              style: "currency",
-              currency: "BRL",
-            }).format(Number(amount))}</span>
-          </Total>
-        </Barra>
+            </Search>
+            <Total>
+              <span>{new Intl.NumberFormat("pt-Br", {
+                style: "currency",
+                currency: "BRL",
+              }).format(Number(amount))}</span>
+            </Total>
+          </Barra>
+        }
         <ContentTable>
-          <TableStandard>
-            <table>
-              <thead>
-                <tr>
-                  <th>Data</th>
-                  <th>Fatura</th>
-                  <th>Produto</th>
-                  <th>Loja</th>
-                  <th>Local</th>
-                  <th>Parcelas</th>
-                  <th>Forma Pagto</th>
-                  <th>Valor</th>
-                  <th>Observação</th>
-                  <th className="close">
-                    <FiTrash
-                      size="20"
-                      onClick={() => {
-                        removeAllTransactions();
-                      }}
-                    />
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Fatura</th>
+                <th>Produto</th>
+                <th>Loja</th>
+                <th>Local</th>
+                <th>Parcelas</th>
+                <th>Forma Pagto</th>
+                <th>Valor</th>
+                <th>Observação</th>
+                <th className="close">
+                  <FiTrash
+                    size="20"
+                    onClick={() => {
+                      removeAllTransactions();
+                    }}
+                  />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.length > 0 ? (
+                items.map((transaction) => (
+                  <tr key={transaction.id}>
+                    <td>
+                      {new Intl.DateTimeFormat().format(
+                        new Date(transaction.data)
+                      )}
+                    </td>
+                    <td>{transaction.fatura.observacao}</td>
+                    <td>{transaction.produto}</td>
+                    <td>{transaction.loja}</td>
+                    <td>{transaction.local}</td>
+                    <td>{(transaction.numeroParcela !== 0 && (transaction.numeroParcela + "/" + transaction.quantidadeParcelas))}</td>
+                    <td>{transaction.tipoPagamento.descricao}</td>
+                    <td>{new Intl.NumberFormat("pt-Br", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(Number(transaction.valor))}</td>
+                    <td className="obs">{transaction.observacao}</td>
+                    <td className="close">
+                      <FiTrash2
+                        size="18"
+                        onClick={() => {
+                          removeTransaction(transaction.id);
+                        }}
+                      />
+                    </td>
+                  </tr>
+                ))) :
+                (<tr>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>
+                  <td>{errorApi}</td>                  
+                </tr>)}
 
-                {items &&
-                  items.map((transaction) => (
-                    <tr key={transaction.id}>
-                      <td>
-                        {new Intl.DateTimeFormat().format(
-                          new Date(transaction.data)
-                        )}
-                      </td>
-                      <td>{transaction.fatura.observacao}</td>
-                      <td>{transaction.produto}</td>
-                      <td>{transaction.loja}</td>
-                      <td>{transaction.local}</td>
-                      <td>{(transaction.numeroParcela !== 0 && (transaction.numeroParcela + "/" + transaction.quantidadeParcelas))}</td>
-                      <td>{transaction.tipoPagamento.descricao}</td>
-                      <td>{new Intl.NumberFormat("pt-Br", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(Number(transaction.valor))}</td>
-                      <td className="obs">{transaction.observacao}</td>
-                      <td className="close">
-                        <FiTrash2
-                          size="18"
-                          onClick={() => {
-                            removeTransaction(transaction.id);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
+            </tbody>
+          </table>
 
-              </tbody>
-            </table>
-          </TableStandard>
         </ContentTable>
+
       </Container>
     </>
   );

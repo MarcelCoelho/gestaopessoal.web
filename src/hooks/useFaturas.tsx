@@ -30,12 +30,13 @@ interface FaturaProviderProps {
 }
 
 interface FaturasContextData {
-  faturas: Fatura[]; 
+  faturas: Fatura[];
   createFatura: (fatura: FaturaInput) => Promise<void>;
   removeFatura: (id: string) => void;
   removeAllFaturas: () => void;
-  updateTipoPagamentoOn: (descricao: string) => void; 
+  updateTipoPagamentoOn: (descricao: string) => void;
   tipoPagamentoOn: string;
+  executeGetFaturas: (update: boolean) => void;
 }
 
 const FaturasContext = createContext<FaturasContextData>(
@@ -46,22 +47,31 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
 
   const [faturas, setFaturas] = useState<Fatura[]>([]);
   const [tipoPagamentoOn, setTipoPagamentoOn] = useState("");
+  const [updateData, setUpdateData] = useState(true);
 
   useEffect(() => {
     getFaturas();
-  }, []);
+  }, [updateData]);
 
   async function getFaturas() {
-    const response = await api.get<Fatura[]>("/Faturas");
 
-    let faturasTemp: Fatura[] = response.data;
-    const dataAtual = new Date();
+    if (updateData) {
+      const response = await api.get<Fatura[]>("/Faturas");
 
-    faturasTemp.forEach(fat => {
-      fat.atual = (dataAtual >= new Date(fat.dataInicio) && dataAtual < new Date(fat.dataFinal));
-    });
+      let faturasTemp: Fatura[] = response.data;
+      const dataAtual = new Date();
 
-    setFaturas(faturasTemp);
+      faturasTemp.forEach(fat => {
+        fat.atual = (dataAtual >= new Date(fat.dataInicio) && dataAtual < new Date(fat.dataFinal));
+      });
+
+      setFaturas(faturasTemp);
+      setUpdateData(false);
+    }
+  }
+
+  function executeGetFaturas(update: boolean) {
+    setUpdateData(update);
   }
 
   async function createFatura(FaturaInput: FaturaInput) {
@@ -73,7 +83,8 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
     });
     const { fatura } = response.data;
 
-    setFaturas([...faturas, fatura]);
+    //setFaturas([...faturas, fatura]);
+    setUpdateData(true);
   }
 
   function removeFatura(id: string) {
@@ -90,19 +101,20 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
     setFaturas([]);
   }
 
-  function updateTipoPagamentoOn(descricao: string){
+  function updateTipoPagamentoOn(descricao: string) {
     setTipoPagamentoOn(descricao);
   }
 
   return (
     <FaturasContext.Provider
       value={{
-        faturas,        
+        faturas,
         createFatura,
         removeFatura,
         removeAllFaturas,
         updateTipoPagamentoOn,
-        tipoPagamentoOn
+        tipoPagamentoOn,
+        executeGetFaturas
       }}
     >
       {children}

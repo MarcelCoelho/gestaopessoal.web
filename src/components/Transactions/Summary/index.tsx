@@ -210,12 +210,12 @@ export function Summary() {
 
     <Content>
 
-      <button onClick={handlePrevious}>
-        <span>{'<'}</span>
-      </button>
-
       {items.length > 0 &&
-        items.map((item) => (
+        <button onClick={handlePrevious}>
+          <span>{'<'}</span>
+        </button>
+      }
+      {items.length > 0 && items.map((item) => (
           <Component fechada={item.fechada} atual={item.atual} key={item.descricao} onClick={() => handleDivFatura(item.descricao)}>
             <div>
               <header>
@@ -235,7 +235,7 @@ export function Summary() {
           </Component>
         ))}
 
-      {!filtro &&
+      {items.length > 0 && !filtro &&
         <button onClick={handleNext}>
           <span>{'>'}</span>
         </button>

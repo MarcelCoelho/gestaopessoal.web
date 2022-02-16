@@ -22,7 +22,7 @@ export const ContainerTable = styled.div`
     table {
       margin: -0.5rem auto;
       border-spacing: 0 0.3rem;
-
+      
       th {
         width: 6rem;
         background: var(--blue);        
@@ -31,7 +31,7 @@ export const ContainerTable = styled.div`
         line-height: 1rem;
         color: white;
         font-weight: 300;
-        font-size: 0.8rem;   
+        font-size: 0.8rem;
       }
 
       td {

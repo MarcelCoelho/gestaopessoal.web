@@ -26,6 +26,7 @@ interface TransactionsContextData {
   removeAllTransactions: () => void;
   getTransactionsByFatura: (fatura: string) => void;
   getTransactionsByTipoPagamento: (fatura: string, tipoPagamentoId: string) => void;
+  errorApi: string;
 }
 
 const TransactionsContext = createContext<TransactionsContextData>(
@@ -40,17 +41,23 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   const [transactionsByFatura, setTransactionsByFatura] = useState<Transaction[]>([]);
   const [transactionsByTipoPagamento, setTransactionsByTipoPagamento] = useState<Transaction[]>([]);
   const [activeTransaction, setActiveTransaction] = useState("fatura");
+  const [errorApi, setErrorApi] = useState('');
 
-  async function getTransacctions() {
-    const response = await api.get<Transaction[]>("/items");
+  async function getTransactions() {
 
-    setTransactions(response.data);
-    setTransactionsByFatura(response.data);
+    try {
+      const response = await api.get<Transaction[]>("/items");
+      setTransactions(response.data);
+      setTransactionsByFatura(response.data);
+      setErrorApi('');
+    }
+    catch (error) {
+      setErrorApi('Error: ' + error.message)
+    }
   }
 
   useEffect(() => {
-    getTransacctions();
-
+    getTransactions();
   }, []);
 
   async function createTransaction(transactionInput: TransactionInput) {
@@ -99,9 +106,11 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       const { transaction } = response.data;
 
       setTransactions([...transactions, transaction]);
-      await getTransacctions();
+      await getTransactions();
       contadorParcelas++;
     }
+
+
   }
 
   function addData(date: Date, addMeses: number) {
@@ -130,14 +139,36 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
     await api.delete(`/items/${id}`)
 
-    var array = [...transactions]; // make a separate copy of the array
+    const arrayTransactions = arraysDelete(id, transactions);
+    setTransactions(arrayTransactions);
 
-    array = transactions.filter(function (transaction) {
-      return transaction.id !== id;
-    });
+    const arrayTransactionsByFatura = arraysDelete(id, transactionsByFatura);
+    setTransactionsByFatura(arrayTransactionsByFatura);
 
-    setTransactions(array);
-    await getTransacctions();
+    const arrayTransactionByTipoPagamento = arraysDelete(id, transactionsByTipoPagamento);
+    setTransactionsByTipoPagamento(arrayTransactionByTipoPagamento);
+
+  }
+
+  function arraysDelete(id: string, array: Transaction[]) {
+
+    if (array && array.length > 0) {
+      var arrayTransactions = [...array]; // make a separate copy of the array
+
+      arrayTransactions = array.filter(function (transaction) {
+        return transaction.id !== id;
+      });
+
+
+      if (arrayTransactions && arrayTransactions.length > 0) {
+        return arrayTransactions;
+      }
+      else
+        return [];
+
+    }
+    else
+      return [];
   }
 
   function removeAllTransactions() {
@@ -206,7 +237,8 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
         removeTransaction,
         removeAllTransactions,
         getTransactionsByFatura,
-        getTransactionsByTipoPagamento
+        getTransactionsByTipoPagamento,
+        errorApi
       }}
     >
       {children}
