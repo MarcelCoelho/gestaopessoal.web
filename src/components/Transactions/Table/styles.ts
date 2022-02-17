@@ -55,9 +55,10 @@ export const ContentTable = styled.div`
     height: 28rem;
     overflow: auto;
     width: 100%;
-
+    
     ::-webkit-scrollbar {
       width: 0.7rem;
+      height: 0.7rem;
     }
 
     ::-webkit-scrollbar-track {
