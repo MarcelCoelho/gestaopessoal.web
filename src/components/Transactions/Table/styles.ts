@@ -9,6 +9,7 @@ export const Container = styled.div`
 export const Barra = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-left: 0.5rem;
 `;
 
 export const Search = styled.div`
@@ -17,7 +18,7 @@ export const Search = styled.div`
     width: 25rem;
     height: 3rem;
     border: none;
-    padding: 0.5rem; 
+    padding: 0.5rem;
   }
 
   input:focus {
@@ -51,9 +52,52 @@ export const Total = styled.div`
 `;
 
 export const ContentTable = styled.div`
-margin-top: 0.5rem;
-
-  table {
+    height: 28rem;
+    overflow: auto;
     width: 100%;
-  }
+    
+    ::-webkit-scrollbar {
+      width: 0.7rem;
+      height: 0.7rem;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--shape);
+      margin-top: 0.8rem;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: var(--blue);    /* color of the scroll thumb */      
+      border: 0.1rem solid orange;  /* creates padding around scroll thumb */
+    }
+    
+    table {
+      margin: 0.5rem;
+      border-spacing: 0 0.3rem;
+      
+      th {
+        width: 8rem;
+        background: var(--blue);        
+        padding: 0.5rem;
+        text-align: left;
+        line-height: 1rem;
+        color: white;
+        font-weight: 300;
+        font-size: 0.8rem;
+      }
+
+      td {
+        width: 8rem;
+        font-size: 0.8rem;
+        padding: 0.5rem;
+        border: 0;
+        background: var(--shape);
+        color: var(--text-body);
+        border-radius: 0.25rem;
+      }
+
+      .close {
+        text-align: center;
+        width: 4rem;
+      }
+    }
 `;

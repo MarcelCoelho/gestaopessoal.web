@@ -31,7 +31,7 @@ export const GlobalStyle = createGlobalStyle`
      font-size: 93.75%; // 15px
    }
 
-   @media (max-width: 720px) {
+   @media (max-width: 920px) {
      font-size: 87.5%; // 14px
      
     .tableData {
@@ -46,6 +46,62 @@ export const GlobalStyle = createGlobalStyle`
 
       .input {
         height: 2rem;
+      }
+    }
+
+    .contentSummary {
+        flex-wrap: wrap;
+
+        button {
+          font-size: 1rem;
+          padding: 2rem;
+          margin-top: -0.5rem;
+
+          span {
+            color: black;
+            font-size: 2.5rem;
+          }
+        }
+      }
+
+    .componentSummary {
+      flex-wrap: wrap;
+      div {
+        width: 8rem;
+        height: 8rem;
+
+        main {
+          width: 5rem;
+          font-size: 0.36rem;
+        }
+
+        footer {
+          font-size: 0.8rem;
+          line-height: 1rem;
+        }
+      }
+    }
+
+    .searchData {
+      input {
+        width: 18rem;
+        height: 2rem;
+        font-size: 0.7rem;
+      }
+      input:focus {
+        border-radius: 0.4rem;
+      }
+      button {
+        margin-left: -1rem;
+        width: 4rem;
+        height: 2rem;
+        font-size:0.7rem;
+      }
+    }
+    .totalData {
+      span {
+        font-size: 1.2rem;
+        padding: 0.3rem;
       }
     }
 
@@ -96,10 +152,12 @@ body::-webkit-scrollbar-thumb {
 
   ::-webkit-scrollbar {
     width: 0.7rem;
+    
   }
 
   ::-webkit-scrollbar-track {
     background: var(--shape);
+    height: 0.4rem;
   }
 
   ::-webkit-scrollbar-thumb {

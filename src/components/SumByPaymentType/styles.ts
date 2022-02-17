@@ -10,8 +10,8 @@ interface ComponentProps {
 export const Component = styled.div<ComponentProps>`
   cursor: pointer;
   margin: 0.5rem;
-  width: 10rem;
-  height: 4rem;
+  width: 8rem;
+  height: 3.5rem;
   
   background: ${(props) => props.active ? (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "gray")): "var(--shape)"};
   border-radius: 1rem;
@@ -30,25 +30,25 @@ export const Component = styled.div<ComponentProps>`
   .header {
     display: grid;
     grid-template-columns: 10fr 1fr;
-    margin: 0.3rem;
+    margin: 0.2rem;
    
     p {
       justify-content: start
-      margin-left: 2rem;
-      font-size: 1rem;
+      margin-left: 3rem;
+      font-size: 0.7rem;
     }
 
     span {
       justify-content: end
-      margin-top: 0.2rem;
-      font-size: 0.8rem;
+      margin-top: 0.5rem;
+      font-size: 0.5rem;
     }
   }
 
   .footer {
     margin-left: 0.3rem;
     margin-top: 0.3rem;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 500;
     justify-content: end
   }

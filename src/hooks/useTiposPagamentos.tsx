@@ -39,33 +39,38 @@ export function TiposPagamentosProvider({ children }: TipoPagamentoProviderProps
 
 
   const [tiposPagamentos, setTiposPagamentos] = useState<TipoPagamento[]>([]);
+  const [updateData, setUpdateData] = useState(true);
 
   async function getTiposPagamentos() {
-    const response = await api.get<TipoPagamento[]>("/tiposPagamentos");
-    setTiposPagamentos(response.data);
+    if (updateData) {
+      const response = await api.get<TipoPagamento[]>("/tiposPagamentos");
+      setTiposPagamentos(response.data);
+      setUpdateData(false);
+    }
   }
 
   useEffect(() => {
     getTiposPagamentos();
-  }, [tiposPagamentos]);
+  }, [updateData]);
 
   async function createTipoPagamento(tipoPagamentoInput: TipoPagamentoInput) {
 
-    const response = await api.post("/tiposPagamentos", 
-    {
-      ...tipoPagamentoInput,
-      usuarioCriacao: 'web',
-      usuarioModificacao: 'web'
-    }); 
+    const response = await api.post("/tiposPagamentos",
+      {
+        ...tipoPagamentoInput,
+        usuarioCriacao: 'web',
+        usuarioModificacao: 'web'
+      });
 
     const { tipoPagamento } = response.data;
-   
-   setTiposPagamentos([...tiposPagamentos, tipoPagamento]);        
+
+    //setTiposPagamentos([...tiposPagamentos, tipoPagamento]);
+    setUpdateData(true);
   }
 
   async function removeTipoPagamento(id: string) {
 
-     await api.delete(`/tiposPagamentos/${id}`)
+    await api.delete(`/tiposPagamentos/${id}`)
 
     var array = [...tiposPagamentos]; // make a separate copy of the array
 
