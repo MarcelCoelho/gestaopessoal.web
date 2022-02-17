@@ -18,7 +18,7 @@ export const Search = styled.div`
     width: 25rem;
     height: 3rem;
     border: none;
-    padding: 0.5rem; 
+    padding: 0.5rem;
   }
 
   input:focus {
@@ -55,10 +55,11 @@ export const ContentTable = styled.div`
     height: 28rem;
     overflow: auto;
     width: 100%;
+
     ::-webkit-scrollbar {
       width: 0.7rem;
-      height: 0.7rem;
     }
+
     ::-webkit-scrollbar-track {
       background: var(--shape);
       margin-top: 0.8rem;

@@ -19,7 +19,7 @@ export function Summary() {
 
   const [itemsPagamentos, setItemsPagamentos] = useState<TotalFatura[]>([]);
 
-  const [filtro, setFiltro] = useState("");
+  const [filtro, setFiltro] = useState(false);
 
   useEffect(() => {
     getTotalPorFatura();
@@ -111,12 +111,12 @@ export function Summary() {
 
   function handleDivFatura(descricao: string) {
     if (itemSelecionado === descricao) {
-      setFiltro(null);
+      setFiltro(false);
       setItemSelecionado(null);
       getTransactionsByFatura(null);
     }
     else {
-      setFiltro(descricao);
+      setFiltro(true);
       setItemSelecionado(descricao);
       getTransactionsByFatura(descricao);
     }
@@ -196,7 +196,7 @@ export function Summary() {
     if (agrupadorFaturaByTipoPagamento.length > 0) {
       agrupadorFaturaByTipoPagamento.sort((a, b) => Number(b.total) - Number(a.total));
 
-      if (filtro !== "" && filtro !== null && filtro !== undefined)
+      if (filtro)
         setItemsPagamentos(agrupadorFaturaByTipoPagamento);
       else
         setItemsPagamentos([]);
@@ -208,7 +208,7 @@ export function Summary() {
 
   return (
 
-    <Content>
+    <Content className="contentSummary">
 
       {items.length > 0 &&
         <button onClick={handlePrevious}>
@@ -216,13 +216,22 @@ export function Summary() {
         </button>
       }
       {items.length > 0 && items.map((item) => (
-          <Component fechada={item.fechada} atual={item.atual} key={item.descricao} onClick={() => handleDivFatura(item.descricao)}>
+          <Component
+                className="componentSummary"
+                fechada={item.fechada} 
+                atual={item.atual}
+                active={filtro}
+                key={item.descricao} 
+                onClick={() => handleDivFatura(item.descricao)}>
             <div>
               <header>
                 <p>{item.descricao}</p>
               </header>
               <main>
-                <p> {new Intl.DateTimeFormat().format(new Date(item.inicio))}-{new Intl.DateTimeFormat().format(new Date(item.fim))}   </p>
+                <p> 
+                    {new Intl.DateTimeFormat().format(new Date(item.inicio))}-
+                    {new Intl.DateTimeFormat().format(new Date(item.fim))}
+                </p>
               </main>
               <footer>
                 {new Intl.NumberFormat("pt-Br", {

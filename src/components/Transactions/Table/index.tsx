@@ -130,7 +130,7 @@ export function Table() {
       <Container>
         {items.length > 0 &&
           <Barra>
-            <Search>
+            <Search className="searchData">
               <input
                 placeholder="Começe a escrever para pesquisar..."
                 value={paramPesquisa}
@@ -139,7 +139,7 @@ export function Table() {
               <button type="submit" onClick={handlePesquisar} >IR</button>
 
             </Search>
-            <Total>
+            <Total className="totalData">
               <span>{new Intl.NumberFormat("pt-Br", {
                 style: "currency",
                 currency: "BRL",
