@@ -13,39 +13,42 @@ import { TiposPagamentosProvider } from "../../hooks/useTiposPagamentos";
 
 export function TipoPagamento() {
 
-  const { 
+  const {
     handleOpenNewTransactionModal,
+    handleOpenChart,
     handleOpenTransaction,
     handleOpenNewFaturaModal,
     handleOpenFatura,
-    handleOpenTipoPagamento} = usePrincipal();
+    handleOpenTipoPagamento } = usePrincipal();
 
   const [isNewTipoPagamentoModalOpen, setIsNewTipoPagamentoModalOpen] = useState(false);
-   
+
   function handleOpenNewTipoPagamentoModal() {
     setIsNewTipoPagamentoModalOpen(true);
-  } 
+  }
 
   function handleCloseNewTipoPagamentoModal() {
     setIsNewTipoPagamentoModalOpen(false);
   }
 
-  return ( 
+  return (
     <TiposPagamentosProvider>
-      <Header 
-            onOpenNewTransactionModal={handleOpenNewTransactionModal}
-            onOpenTransaction={handleOpenTransaction}
-            onOpenNewFatura={handleOpenNewFaturaModal}
-            onOpenFatura={handleOpenFatura}
-            onOpenNewTipoPagamento={handleOpenNewTipoPagamentoModal}
-            onOpenTipoPagamento={handleOpenTipoPagamento}
-            showButtonNewTransaction={false}
-            showButtonTransacction={true} 
-            showButtonNewFatura={false}
-            showButtonFatura={true} 
-            showButtonNewTipoPagamento={true}
-            showButtonTipoPagamento={false} 
-          />
+      <Header
+        onOpenNewTransactionModal={handleOpenNewTransactionModal}
+        onOpenChart={handleOpenChart}
+        onOpenTransaction={handleOpenTransaction}
+        onOpenNewFatura={handleOpenNewFaturaModal}
+        onOpenFatura={handleOpenFatura}
+        onOpenNewTipoPagamento={handleOpenNewTipoPagamentoModal}
+        onOpenTipoPagamento={handleOpenTipoPagamento}
+        showButtonNewTransaction={false}
+        showButtonChart={true}
+        showButtonTransacction={true}
+        showButtonNewFatura={false}
+        showButtonFatura={true}
+        showButtonNewTipoPagamento={true}
+        showButtonTipoPagamento={false}
+      />
       <Container>
         <Title />
         <Table />

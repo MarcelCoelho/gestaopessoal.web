@@ -7,12 +7,14 @@ import { Container, Content, LinkButton } from "./styles";
 
 interface HeaderProps {
   onOpenNewTransactionModal: () => void;
+  onOpenChart: () => void;
   onOpenTransaction: () => void;
   onOpenNewFatura: () => void;
   onOpenFatura: () => void;
   onOpenNewTipoPagamento: () => void;
   onOpenTipoPagamento: () => void;
   showButtonNewTransaction: boolean;
+  showButtonChart: boolean;
   showButtonTransacction: boolean;
   showButtonNewFatura: boolean;
   showButtonFatura: boolean;
@@ -22,11 +24,13 @@ interface HeaderProps {
 
 export function Header({
   onOpenNewTransactionModal,
+  onOpenChart,
   onOpenTransaction,
   onOpenNewFatura,
   onOpenFatura,
   onOpenNewTipoPagamento,
   onOpenTipoPagamento,
+  showButtonChart,
   showButtonNewTransaction,
   showButtonTransacction,
   showButtonNewFatura,
@@ -38,12 +42,21 @@ export function Header({
     <Container>
       <Content>
         <div className="header">
-          <img src={logoImg} alt="mfcmoney"/>
+          <img src={logoImg} alt="mfcmoney" />
           <span>Controle de Gastos</span>
         </div>
 
         <div>
           <div className="newPage">
+
+            <button
+              type="button"
+              className="buttonEntity"
+              onClick={onOpenChart}
+              hidden={!showButtonChart}>
+              <LinkButton to="/chart" > Gráficos </LinkButton>
+            </button>
+
             <button
               type="button"
               className="buttonEntity"

@@ -12,37 +12,40 @@ import { FaturasProvider } from "../../hooks/useFaturas";
 
 export function Fatura() {
 
-  const { 
+  const {
     handleOpenNewTransactionModal,
     handleOpenTransaction,
-    handleOpenTipoPagamento} = usePrincipal();
+    handleOpenTipoPagamento,
+    handleOpenChart } = usePrincipal();
 
-    const [isNewFaturaModalOpen, setIsNewFaturaModalOpen] = useState(false);
-   
-    function handleOpenNewFaturaModal() {
-      setIsNewFaturaModalOpen(true);
-    } 
-  
-    function handleCloseNewFaturaModal() {
-      setIsNewFaturaModalOpen(false);
-    }
+  const [isNewFaturaModalOpen, setIsNewFaturaModalOpen] = useState(false);
+
+  function handleOpenNewFaturaModal() {
+    setIsNewFaturaModalOpen(true);
+  }
+
+  function handleCloseNewFaturaModal() {
+    setIsNewFaturaModalOpen(false);
+  }
 
   return (
     <FaturasProvider>
-      <Header 
-            onOpenNewTransactionModal={handleOpenNewTransactionModal}
-            onOpenTransaction={handleOpenTransaction}
-            onOpenNewFatura={handleOpenNewFaturaModal}
-            onOpenFatura={() => {}}
-            onOpenNewTipoPagamento={handleOpenTipoPagamento}
-            onOpenTipoPagamento={handleOpenTipoPagamento}
-            showButtonNewTransaction={false}
-            showButtonTransacction={true} 
-            showButtonNewFatura={true}
-            showButtonFatura={false} 
-            showButtonNewTipoPagamento={false}
-            showButtonTipoPagamento={true} 
-          />
+      <Header
+        onOpenNewTransactionModal={handleOpenNewTransactionModal}
+        onOpenChart={handleOpenChart}
+        onOpenTransaction={handleOpenTransaction}
+        onOpenNewFatura={handleOpenNewFaturaModal}
+        onOpenFatura={() => { }}
+        onOpenNewTipoPagamento={handleOpenTipoPagamento}
+        onOpenTipoPagamento={handleOpenTipoPagamento}
+        showButtonNewTransaction={false}
+        showButtonChart={true}
+        showButtonTransacction={true}
+        showButtonNewFatura={true}
+        showButtonFatura={false}
+        showButtonNewTipoPagamento={false}
+        showButtonTipoPagamento={true}
+      />
       <Container>
         <Title />
         <Table />
@@ -51,6 +54,6 @@ export function Fatura() {
         isOpen={isNewFaturaModalOpen}
         onRequestClose={handleCloseNewFaturaModal}
       />
-   </FaturasProvider>
+    </FaturasProvider>
   );
 }

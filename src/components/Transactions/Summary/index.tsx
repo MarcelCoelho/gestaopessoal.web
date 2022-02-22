@@ -73,6 +73,7 @@ export function Summary() {
     let arrayFiltrado = [];
 
     if (arrayAgrupadoPorFatura.length > 1) {
+      console.log(arrayAgrupadoPorFatura);
 
       const faturaAtual: TotalFatura[] = arrayAgrupadoPorFatura.filter(arr => {
         return (arr.atual === true);
@@ -216,33 +217,33 @@ export function Summary() {
         </button>
       }
       {items.length > 0 && items.map((item) => (
-          <Component
-                className="componentSummary"
-                fechada={item.fechada} 
-                atual={item.atual}
-                active={filtro}
-                key={item.descricao} 
-                onClick={() => handleDivFatura(item.descricao)}>
-            <div>
-              <header>
-                <p>{item.descricao}</p>
-              </header>
-              <main>
-                <p> 
-                    {new Intl.DateTimeFormat().format(new Date(item.inicio))}-
-                    {new Intl.DateTimeFormat().format(new Date(item.fim))}
-                </p>
-              </main>
-              <footer>
-                {new Intl.NumberFormat("pt-Br", {
-                  style: "currency",
-                  currency: "BRL",
-                }).format(item.total)}
-              </footer>
-              <strong>{item.quantidade}</strong>
-            </div>
-          </Component>
-        ))}
+        <Component
+          className="componentSummary"
+          fechada={item.fechada}
+          atual={item.atual}
+          active={filtro}
+          key={item.descricao}
+          onClick={() => handleDivFatura(item.descricao)}>
+          <div>
+            <header>
+              <p>{item.descricao}</p>
+            </header>
+            <main>
+              <p>
+                {new Intl.DateTimeFormat().format(new Date(item.inicio))}-
+                {new Intl.DateTimeFormat().format(new Date(item.fim))}
+              </p>
+            </main>
+            <footer>
+              {new Intl.NumberFormat("pt-Br", {
+                style: "currency",
+                currency: "BRL",
+              }).format(item.total)}
+            </footer>
+            <strong>{item.quantidade}</strong>
+          </div>
+        </Component>
+      ))}
 
       {items.length > 0 && !filtro &&
         <button onClick={handleNext}>

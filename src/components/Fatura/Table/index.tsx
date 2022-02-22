@@ -10,6 +10,7 @@ import { TableStandard } from '../../TableStandard';
 export function Table() {
   const {
     faturas,
+    updateCloseFatura,
     removeAllFaturas,
     removeFatura
   } = useFaturas();
@@ -40,8 +41,8 @@ export function Table() {
             {faturas &&
               faturas.map((fatura) => (
                 <Tr key={fatura.id}
-                    fechada={fatura.fechada}
-                    atual={fatura.atual}>
+                  fechada={fatura.fechada}
+                  atual={fatura.atual}>
 
                   <td className="title">{fatura.observacao}</td>
                   <td className="title">{fatura.mes + "/" + fatura.ano}</td>
@@ -51,7 +52,7 @@ export function Table() {
                   <td className="title">{new Intl.DateTimeFormat().format(
                     new Date(fatura.dataFinal)
                   )}</td>
-                  <td className="title"><Checkbox value={fatura.fechada} checked={fatura.fechada} /></td>
+                  <td className="title"><Checkbox value={fatura.fechada} checked={fatura.fechada} onClick={() => updateCloseFatura(fatura.id)} /></td>
                   <td className="close">
                     <FiTrash2
                       size="18"

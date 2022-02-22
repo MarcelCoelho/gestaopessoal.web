@@ -5,7 +5,6 @@ export const Container = styled.div`
  flex-direction: column;
  margin-top: 3rem;
 `;
-
 export const Barra = styled.div`
   display: flex;
   justify-content: space-between;
@@ -13,14 +12,12 @@ export const Barra = styled.div`
 `;
 
 export const Search = styled.div`
-  
   input {
     width: 25rem;
     height: 3rem;
     border: none;
     padding: 0.5rem;
   }
-
   input:focus {
     outline: none;
     border-radius: 0.7rem;
@@ -42,7 +39,6 @@ export const Search = styled.div`
       border: 2px solid #04d361;
     }}
 `;
-
 export const Total = styled.div`
     span {
       font-size: 1.7rem;
@@ -50,17 +46,15 @@ export const Total = styled.div`
       color: var(--blue);
     }
 `;
-
 export const ContentTable = styled.div`
     height: 28rem;
     overflow: auto;
-    width: 100%;
-    
+
     ::-webkit-scrollbar {
       width: 0.7rem;
       height: 0.7rem;
     }
-
+    
     ::-webkit-scrollbar-track {
       background: var(--shape);
       margin-top: 0.8rem;

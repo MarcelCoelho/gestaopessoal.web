@@ -10,7 +10,13 @@ from dbo.items i
 	  on tp.id = i.TipoPagamentoId
 	 inner join dbo.Faturas f 
 	  on f.id = i.FaturaId
+where i.Loja = '1001 Festas'
 order by i.Data;
 
-update Items set Data = CAST('2022-02-10' as date)
-where Id = 'B53C8A56-9347-4B88-C78A-08D9ED0EC374';
+update Items set Valor = '4.99'
+where Id = 'D5F7A6DD-769D-4D31-D75B-08D9F0EA4CAF';
+
+update Items set TipoPagamentoId = '5EB7D8F9-3701-43C1-3C1D-08D9DAF6C0A1'
+where Id = 'D5F7A6DD-769D-4D31-D75B-08D9F0EA4CAF';
+
+select * from TiposPagamentos;

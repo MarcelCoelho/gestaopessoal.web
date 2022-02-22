@@ -32,6 +32,7 @@ interface FaturaProviderProps {
 interface FaturasContextData {
   faturas: Fatura[];
   createFatura: (fatura: FaturaInput) => Promise<void>;
+  updateCloseFatura: (id: string) => void;
   removeFatura: (id: string) => void;
   removeAllFaturas: () => void;
   updateTipoPagamentoOn: (descricao: string) => void;
@@ -59,10 +60,10 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
       const response = await api.get<Fatura[]>("/Faturas");
 
       let faturasTemp: Fatura[] = response.data;
-      const dataAtual = new Date();
 
       faturasTemp.forEach(fat => {
-        fat.atual = (dataAtual >= new Date(fat.dataInicio) && dataAtual < new Date(fat.dataFinal));
+        fat.atual = (new Date() >= new Date(fat.dataInicio) &&
+          new Date() <= new Date(fat.dataFinal));
       });
 
       setFaturas(faturasTemp);
@@ -82,8 +83,11 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
       usuarioModificacao: 'web'
     });
     const { fatura } = response.data;
+    setUpdateData(true);
+  }
 
-    //setFaturas([...faturas, fatura]);
+  async function updateCloseFatura(id: string) {
+    await api.put(`/fatura/${id}`);
     setUpdateData(true);
   }
 
@@ -110,6 +114,7 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
       value={{
         faturas,
         createFatura,
+        updateCloseFatura,
         removeFatura,
         removeAllFaturas,
         updateTipoPagamentoOn,

@@ -13,6 +13,7 @@ import { Container } from "./styles";
 export function Transactions() {
 
   const {
+    handleOpenChart,
     handleOpenTransaction,
     handleOpenFatura,
     handleOpenTipoPagamento } = usePrincipal();
@@ -36,12 +37,14 @@ export function Transactions() {
 
             <Header
               onOpenNewTransactionModal={handleOpenNewTransactionModal}
+              onOpenChart={handleOpenChart}
               onOpenTransaction={handleOpenTransaction}
               onOpenNewFatura={() => { }}
               onOpenFatura={handleOpenFatura}
               onOpenNewTipoPagamento={() => { }}
               onOpenTipoPagamento={handleOpenTipoPagamento}
               showButtonNewTransaction={true}
+              showButtonChart={true}
               showButtonTransacction={false}
               showButtonNewFatura={false}
               showButtonFatura={true}
