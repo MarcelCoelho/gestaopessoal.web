@@ -54,7 +54,6 @@ export const ContentTable = styled.div`
       width: 0.7rem;
       height: 0.7rem;
     }
-    
     ::-webkit-scrollbar-track {
       background: var(--shape);
       margin-top: 0.8rem;

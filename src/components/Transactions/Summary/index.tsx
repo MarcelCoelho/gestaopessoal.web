@@ -73,7 +73,6 @@ export function Summary() {
     let arrayFiltrado = [];
 
     if (arrayAgrupadoPorFatura.length > 1) {
-      console.log(arrayAgrupadoPorFatura);
 
       const faturaAtual: TotalFatura[] = arrayAgrupadoPorFatura.filter(arr => {
         return (arr.atual === true);

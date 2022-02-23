@@ -8,13 +8,12 @@ import { Chart } from "react-google-charts";
 
 import { usePrincipal } from "../../hooks/usePrincipal";
 import { useTransactions } from "../../hooks/useTransactions";
-import { useTiposPagamentos } from "../../hooks/useTiposPagamentos";
 import { useEffect, useState } from "react";
 
 import _ from 'lodash';
 
 export function Charts() {
-  const [chartData, setChartData] = useState<Transaction[]>([]);
+  const [chartData, setChartData] = useState([]);
 
   const {
     handleOpenChart } = usePrincipal();
@@ -23,14 +22,16 @@ export function Charts() {
     transactions
   } = useTransactions();
 
-  let data = [];
-
   const loadData = () => {
-    const faturas = _.groupBy(transactions, (transacition: Transaction) => {
-      return transacition.fatura.observacao
+
+    const currentDate = new Date();
+    let faturasFilter = transactions.filter(transaction => {
+      return String(transaction.fatura.ano) === String(currentDate.getFullYear());
     });
 
-    console.log('faturas', faturas);
+    let faturas = _.groupBy(faturasFilter, (transacition: Transaction) => {
+      return transacition.fatura.observacao
+    });
 
     const tiposPagamentos: [] = _.groupBy(transactions, (transaction: Transaction) => {
       return transaction.tipoPagamento.descricao;
@@ -40,60 +41,112 @@ export function Charts() {
     _.forEach(tiposPagamentos, (value, key) => {
       arrTiposPagamentos.push(key);
     });
+    arrTiposPagamentos = _.orderBy(arrTiposPagamentos);
     arrTiposPagamentos.unshift('Fatura');
-    arrTiposPagamentos.push('Media');
+    arrTiposPagamentos.push('Average');
 
-    const tiposPagamentosOrdenados = _.orderBy(arrTiposPagamentos);
-    console.log('ordenados', tiposPagamentosOrdenados);
+    let totalPorTiposPagamentos = [];
 
+    _.forEach(faturas, (value, key) => {
 
-    tiposPagamentosOrdenados.forEach(tp => {
-
-      if (tp === 'Fatura' || tp === 'Media')
-        return;
-
-      console.log('tp Loop: ', tp);
-
-      _.forEach(faturas, (value, key) => {
-
-        console.log('Fatura: ', key, value)
-
-        const tps = _.groupBy(value, (item) => {
-          return item.tipoPagamento.descricao;
-        });
-
-        const result = _.map(tps, (value, key) => [
-          key,
-          _.sumBy(tps[key], (v) => v.valor)
-        ])
-
-        //console.log('---> ', result);
-
+      const tps = _.groupBy(value, (item) => {
+        return item.tipoPagamento.descricao;
       });
+
+      const sumTiposPagamentos = _.map(tps, (value, key) => [
+        key,
+        _.sumBy(tps[key], (v) => v.valor)
+      ])
+
+      totalPorTiposPagamentos.push(key, sumTiposPagamentos);
+
     });
 
-    return arrTiposPagamentos;
+    const arrayChart = [arrTiposPagamentos];
+
+    let index = 0;
+    _.forEach(totalPorTiposPagamentos, (value, key) => {
+
+      const fatura: string = totalPorTiposPagamentos[index];
+      index++;
+
+      let alimentacao = 0; let boleto = 0; let credito = 0; let debito = 0; let picpay = 0; let pix = 0; let refeicao = 0;
+      let media = 0;
+      arrTiposPagamentos.forEach(tp => {
+
+        if (tp === 'Fatura' || tp === 'Average')
+          return;
+
+        _.forEach(totalPorTiposPagamentos[index], (value, key) => {
+
+          if (tp === value[0] && value[1] > 0) {
+            switch (tp) {
+              case 'Alimentação':
+                alimentacao = getValor(value[1]);
+                break;
+              case 'Boleto':
+                boleto = getValor(value[1]);
+                break;
+              case 'Crédito':
+                credito = getValor(value[1]);
+                break;
+              case 'Débito':
+                debito = getValor(value[1]);
+                break;
+              case 'PicPay':
+                picpay = getValor(value[1]);
+                break;
+              case 'Pix':
+                pix = getValor(value[1]);
+                break;
+              case 'Refeição':
+                refeicao = getValor(value[1]);
+                break;
+            }
+          }
+        })
+      })
+
+      if (fatura !== undefined) {
+
+        media = (Number(alimentacao) +
+          Number(boleto) +
+          Number(credito) +
+          Number(debito) +
+          Number(picpay) +
+          Number(pix) +
+          Number(refeicao) / 7);
+
+        arrayChart.push([fatura,
+          Number(alimentacao.toFixed(2)),
+          Number(boleto.toFixed(2)),
+          Number(credito.toFixed(2)),
+          Number(debito.toFixed(2)),
+          Number(picpay.toFixed(2)),
+          Number(pix.toFixed(2)),
+          Number(refeicao.toFixed(2)),
+          Number(media.toFixed(2))]);
+      }
+      index++
+
+    })
+    return arrayChart;
+  }
+
+  function getValor(valor) {
+    return valor;
   }
 
   useEffect(() => {
     setChartData(loadData());
   }, [])
 
-  /*const data = [
-    ["Fatura", "Credito", "Debito", "Pix", "Boleto", "Média"],
-    ["Fev/2022", 165, 938, 522, 998, 614.6],
-    ["Mar/2022", 135, 1120, 599, 1268, 682],
-    ["Abr/2022", 157, 1167, "", 807, 623],
-    ["Mai/2022", 139, 1110, 615, 968, 609.4],
-    ["Jun/2022", 136, 691, 629, 1026, 569.6]
-  ];*/
-
   const options = {
-    title: "Monthly Coffee Production by Country",
+    title: "Faturas Por Tipos de Pagamentos",
     vAxis: { title: "Valores" },
     hAxis: { title: "Faturas" },
     seriesType: "bars",
-    series: { 4: { type: "line" } }
+    series: { 7: { type: "line" } }
   };
   return (
     <>

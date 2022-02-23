@@ -15,21 +15,23 @@ const Dashboard = ({ children, redirectTo }) => {
 export function MainRoutes() {
   return (
     <Router>
+      <TiposPagamentosProvider>
+        <TransactionsProvider>
+          <Routes>
 
-      <Routes>
+            <Route path="/dashboard" element={<Transactions />} />
+            <Route path="/" element={<Dashboard redirectTo="/dashboard">
+              <Transactions />
+            </Dashboard>}>
+            </Route>
+            <Route path="/tipoPagamento" element={<TipoPagamento />} />
+            <Route path="/fatura" element={<Fatura />} />
 
-        <Route path="/dashboard" element={<Transactions />} />
-        <Route path="/" element={<Dashboard redirectTo="/dashboard">
-          <Transactions />
-        </Dashboard>}>
-        </Route>
-        <Route path="/tipoPagamento" element={<TipoPagamento />} />
-        <Route path="/fatura" element={<Fatura />} />
+            <Route path="/chart" element={<Charts />} />
 
-        <Route path="/chart" element={<Charts />} />
-
-      </Routes>
-
+          </Routes>
+        </TransactionsProvider>
+      </TiposPagamentosProvider>
     </Router>
   )
 }
