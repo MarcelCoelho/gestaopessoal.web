@@ -115,7 +115,7 @@ export function Charts() {
           Number(debito) +
           Number(picpay) +
           Number(pix) +
-          Number(refeicao) / 7);
+          Number(refeicao));
 
         arrayChart.push([fatura,
           Number(alimentacao.toFixed(2)),

@@ -54,6 +54,7 @@ export type Transaction = {
   usuarioModificacao: string;
   dataCriacao: Date;
   dataModificacao: Date;
+  check: boolean;
 }
 
 export type TotalFatura = {

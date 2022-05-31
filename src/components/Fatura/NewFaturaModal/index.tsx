@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import DatePicker from 'react-datepicker';
 
-import {registerLocale} from 'react-datepicker';
+import { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/locale/pt';
 
 
@@ -38,14 +38,15 @@ export function NewFaturaModal({
 
     const mes = periodo.split("/")[0];
     const ano = periodo.split("/")[1];
-    
+
     await createFatura({
-                        mes,
-                        ano,
-                        dataInicio,
-                        dataFinal,
-                        fechada,
-                        observacao});
+      mes,
+      ano,
+      dataInicio,
+      dataFinal,
+      fechada,
+      observacao
+    });
 
     setPeriodo("");
     setObservacao("");
@@ -55,7 +56,7 @@ export function NewFaturaModal({
 
     onRequestClose();
   }
-  
+
   return (
     <Modal
       isOpen={isOpen}
@@ -68,48 +69,47 @@ export function NewFaturaModal({
         onClick={onRequestClose}
         className="react-modal-close"
       >
-        <FiX size={20} stroke="#5429CC"/>
+        <FiX size={20} stroke="#5429CC" />
       </button>
 
       <Container className="contentModal">
-      <form onSubmit={handleCreateNewTipoPagamento}>
-        <h2>Cadastrar Fatura</h2>
+        <form onSubmit={handleCreateNewTipoPagamento}>
+          <h2>Cadastrar Fatura</h2>
 
-        <input
-          placeholder="Título"
-          value={observacao}
-          onChange={(event) => setObservacao(event.target.value)}
-        ></input>
+          <input
+            placeholder="Título"
+            value={observacao}
+            onChange={(event) => setObservacao(event.target.value)}
+          ></input>
 
-        <input
-          placeholder="Periodo"
-          value={periodo}
-          onChange={(event) => setPeriodo(event.target.value)}
-        ></input>
+          <input
+            placeholder="Periodo"
+            value={periodo}
+            onChange={(event) => setPeriodo(event.target.value)}
+          ></input>
 
+          <DatePicker
+            placeholderText="Data Inicio"
+            locale="pt"
+            selected={dataInicio}
+            onChange={(date: Date) => setDataInicio(date)}
+            dateFormat="dd/MM/yyyy">
+          </DatePicker>
 
-        <DatePicker
-           placeholderText="Data Inicio"
-           locale="pt"
-           selected={dataInicio}
-           onChange={(date: Date) => setDataInicio(date)}
-           dateFormat="dd/MM/yyyy">
-        </DatePicker>
+          <DatePicker
+            placeholderText="Data Final"
+            locale="pt"
+            selected={dataFinal}
+            onChange={(date: Date) => setDataFinal(date)}
+            dateFormat="dd/MM/yyyy">
+          </DatePicker>
 
-        <DatePicker
-           placeholderText="Data Final"
-           locale="pt"
-           selected={dataFinal}
-           onChange={(date: Date) => setDataFinal(date)}
-           dateFormat="dd/MM/yyyy">
-        </DatePicker>
+          <Checkbox
+            value={fechada}
+            onChange={(event) => setFechada(Boolean(event.target.value))}
+          />
 
-        <Checkbox 
-           value={fechada}
-           onChange={(event) => setFechada(Boolean(event.target.value))}
-        />
-      
-        <button type="submit">Cadastrar</button>
+          <button type="submit">Cadastrar</button>
         </form>
       </Container>
     </Modal>

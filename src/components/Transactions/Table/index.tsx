@@ -3,9 +3,12 @@ import { useTransactions } from "../../../hooks/useTransactions";
 import { FiTrash, FiTrash2 } from "react-icons/fi";
 
 import { Container, Search, Barra, Total, ContentTable } from "./styles";
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 
-interface Transaction {
+import { Checkbox } from "@material-ui/core";
+
+import { Transaction } from '../../../types';
+/*interface Transaction {
   id: string;
   data: Date;
   produto: string;
@@ -27,7 +30,8 @@ interface Transaction {
   usuarioModificacao: string;
   dataCriacao: Date;
   dataModificacao: Date;
-}
+  check: boolean;
+}*/
 
 export function Table() {
   const {
@@ -42,6 +46,8 @@ export function Table() {
   const [items, setItems] = useState<Transaction[]>([]);
   const [paramPesquisa, setParamPesquisa] = useState("");
   const [amount, setAmount] = useState(0);
+
+  const [headerChecked, setHeaderChecked] = useState(true);
 
   useEffect(() => {
     setItemsByFaturaOrTipoPagamento();
@@ -61,6 +67,13 @@ export function Table() {
 
   function indexOf(valor: string) {
     return (valor.toLocaleLowerCase().indexOf(paramPesquisa.toLocaleLowerCase()) > -1);
+  }
+
+  function handleKeypress(e) {
+
+    if (e.key === 'Enter') {
+      handlePesquisar();
+    }
   }
 
   function handlePesquisar() {
@@ -116,12 +129,50 @@ export function Table() {
     if (array !== undefined && array.length > 0) {
       let sumAmount: number = 0;
       array.forEach(transaction => {
-        sumAmount += Number(transaction.valor);
+        if (transaction.check)
+          sumAmount += Number(transaction.valor);
       });
       setAmount(sumAmount);
     }
     else {
       setAmount(0);
+    }
+  }
+
+  function handleCheckHeader() {
+    setHeaderChecked(!headerChecked);
+    items.forEach(item => item.check = !headerChecked);
+    setItems(items);
+    SumTransactions(items);
+  }
+
+  function hanldeCheckedItem(id: string) {
+    let newItems: Transaction[] = [];
+    let counterFalse: number = 0;
+
+    items.forEach(item => {
+      if (item.id === id)
+        item.check = !item.check;
+
+      if (!item.check) {
+        setHeaderChecked(false);
+        counterFalse += 1;
+      }
+
+      if (counterFalse == 0)
+        setHeaderChecked(true);
+
+      newItems.push(item);
+
+    });
+
+    setItems(newItems);
+    SumTransactions(newItems);
+  }
+
+  function handleDeleteTransaction(id: string) {
+    if (window.confirm('Tem certeza que deseja remover?')) {
+      removeTransaction(id);
     }
   }
 
@@ -135,6 +186,7 @@ export function Table() {
                 placeholder="Começe a escrever para pesquisar..."
                 value={paramPesquisa}
                 onChange={(event) => setParamPesquisa(event.target.value)}
+                onKeyPress={handleKeypress}
               />
               <button type="submit" onClick={handlePesquisar} >IR</button>
 
@@ -160,6 +212,9 @@ export function Table() {
                 <th>Forma Pagto</th>
                 <th>Valor</th>
                 <th>Observação</th>
+                <th><Checkbox
+                  checked={headerChecked}
+                  onClick={handleCheckHeader} /></th>
                 <th className="close">
                   <FiTrash
                     size="20"
@@ -190,11 +245,15 @@ export function Table() {
                       currency: "BRL",
                     }).format(Number(transaction.valor))}</td>
                     <td className="obs">{transaction.observacao}</td>
+                    <td><Checkbox
+                      value={transaction.check}
+                      checked={transaction.check}
+                      onClick={() => hanldeCheckedItem(transaction.id)} /></td>
                     <td className="close">
                       <FiTrash2
                         size="18"
                         onClick={() => {
-                          removeTransaction(transaction.id);
+                          handleDeleteTransaction(transaction.id);
                         }}
                       />
                     </td>
@@ -209,7 +268,7 @@ export function Table() {
                   <td>{errorApi}</td>
                   <td>{errorApi}</td>
                   <td>{errorApi}</td>
-                  <td>{errorApi}</td>                  
+                  <td>{errorApi}</td>
                 </tr>)}
 
             </tbody>

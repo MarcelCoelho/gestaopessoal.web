@@ -42,6 +42,7 @@ export function NewTransactionModal({
   const [quantidadeParcelas, setQuantidadeParcelas] = useState<number>();
   const [valor, setValor] = useState("");
   const [observacao, setObservacao] = useState("");
+  const [check, setCheck] = useState(true);
 
   const [faturaId, setFaturaId] = useState("");
   const [tipoPagamentoId, setTipoPagamentoId] = useState("");
@@ -66,7 +67,7 @@ export function NewTransactionModal({
 
     for (let i = 0; i < faturas.length; ++i) {
       if (!faturas[i].fechada)
-        optionsTemporary[i] = faturas[i].observacao;      
+        optionsTemporary[i] = faturas[i].observacao;
     }
 
     setOptionsFatura(optionsTemporary);
@@ -97,7 +98,7 @@ export function NewTransactionModal({
 
     const _valor = Number.parseFloat(valor).toFixed(2);
 
-      const newDate = new Date(data);
+    const newDate = new Date(data);
 
     await createTransaction({
       data: newDate,
@@ -110,7 +111,8 @@ export function NewTransactionModal({
       valor: _valor,
       observacao,
       faturaId: _faturaId,
-      tipoPagamentoId: _tipoPagamentoId
+      tipoPagamentoId: _tipoPagamentoId,
+      check
     });
 
     setData(new Date());
@@ -123,6 +125,7 @@ export function NewTransactionModal({
     setObservacao("");
     setFaturaId("");
     setTipoPagamentoId("");
+    setCheck(true);
     onRequestClose();
   }
 

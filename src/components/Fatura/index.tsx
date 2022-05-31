@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "../Header";
 import { Table } from "../Fatura/Table";
 import { Title } from "../Fatura/Title";
@@ -13,7 +13,6 @@ import { FaturasProvider } from "../../hooks/useFaturas";
 export function Fatura() {
 
   const {
-    handleOpenNewTransactionModal,
     handleOpenTransaction,
     handleOpenTipoPagamento,
     handleOpenChart } = usePrincipal();
@@ -31,12 +30,12 @@ export function Fatura() {
   return (
     <FaturasProvider>
       <Header
-        onOpenNewTransactionModal={handleOpenNewTransactionModal}
-        onOpenChart={handleOpenChart}
-        onOpenTransaction={handleOpenTransaction}
+        onOpenNewTransactionModal={() => { }}
+        onOpenNewTipoPagamento={() => { }}
         onOpenNewFatura={handleOpenNewFaturaModal}
         onOpenFatura={() => { }}
-        onOpenNewTipoPagamento={handleOpenTipoPagamento}
+        onOpenChart={handleOpenChart}
+        onOpenTransaction={handleOpenTransaction}
         onOpenTipoPagamento={handleOpenTipoPagamento}
         showButtonNewTransaction={false}
         showButtonChart={true}

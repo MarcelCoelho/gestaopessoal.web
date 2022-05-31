@@ -46,7 +46,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   async function getTransactions() {
 
     try {
-      const response = await api.get<Transaction[]>("/items");
+      const response = await api.get<Transaction[]>("/items/FiltroFaturas");
       setTransactions(response.data);
       setTransactionsByFatura(response.data);
       setErrorApi('');
@@ -135,8 +135,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     return faturaById;
   }
 
-  async function removeTransaction(id: string) {
-
+  async function remove(id: string) {
     await api.delete(`/items/${id}`)
 
     const arrayTransactions = arraysDelete(id, transactions);
@@ -147,7 +146,10 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
     const arrayTransactionByTipoPagamento = arraysDelete(id, transactionsByTipoPagamento);
     setTransactionsByTipoPagamento(arrayTransactionByTipoPagamento);
+  }
 
+  async function removeTransaction(id: string) {
+    remove(id);
   }
 
   function arraysDelete(id: string, array: Transaction[]) {

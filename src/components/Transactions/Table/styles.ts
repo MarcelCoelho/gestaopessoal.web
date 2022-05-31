@@ -10,7 +10,6 @@ export const Barra = styled.div`
   justify-content: space-between;
   margin-left: 0.5rem;
 `;
-
 export const Search = styled.div`
   input {
     width: 25rem;
@@ -22,7 +21,7 @@ export const Search = styled.div`
     outline: none;
     border-radius: 0.7rem;
   }
-
+  
   button {
     margin-left: -2rem;
     width: 6rem;
@@ -49,7 +48,6 @@ export const Total = styled.div`
 export const ContentTable = styled.div`
     height: 28rem;
     overflow: auto;
-
     ::-webkit-scrollbar {
       width: 0.7rem;
       height: 0.7rem;
@@ -62,11 +60,9 @@ export const ContentTable = styled.div`
       background-color: var(--blue);    /* color of the scroll thumb */      
       border: 0.1rem solid orange;  /* creates padding around scroll thumb */
     }
-    
     table {
       margin: 0.5rem;
       border-spacing: 0 0.3rem;
-      
       th {
         width: 8rem;
         background: var(--blue);        
@@ -77,7 +73,6 @@ export const ContentTable = styled.div`
         font-weight: 300;
         font-size: 0.8rem;
       }
-
       td {
         width: 8rem;
         font-size: 0.8rem;
@@ -87,7 +82,6 @@ export const ContentTable = styled.div`
         color: var(--text-body);
         border-radius: 0.25rem;
       }
-
       .close {
         text-align: center;
         width: 4rem;

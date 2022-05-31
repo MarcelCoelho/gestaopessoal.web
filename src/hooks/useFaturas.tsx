@@ -3,25 +3,10 @@ import {
   useEffect,
   useState,
   ReactNode,
-  useContext,
+  useContext
 } from "react";
 import { api } from "../services/api";
-
-interface Fatura {
-  id: string;
-  mes: string;
-  ano: string;
-  dataInicio: Date;
-  dataFinal: Date;
-  orden: number;
-  fechada: boolean;
-  observacao: string;
-  usuarioCriacao: string;
-  usuarioModificacao: string;
-  dataCriacao: Date;
-  dataModificacao: Date;
-  atual: boolean;
-}
+import { Fatura } from '../types';
 
 type FaturaInput = Omit<Fatura, "id" | "orden" | "atual" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
@@ -76,13 +61,13 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
   }
 
   async function createFatura(FaturaInput: FaturaInput) {
-    const response = await api.post("/Faturas", {
+    await api.post("/Faturas", {
       ...FaturaInput,
       orden: 0,
       usuarioCriacao: 'web',
       usuarioModificacao: 'web'
     });
-    const { fatura } = response.data;
+
     setUpdateData(true);
   }
 
