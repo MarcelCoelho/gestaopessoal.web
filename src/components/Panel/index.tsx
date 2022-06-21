@@ -1,8 +1,8 @@
 
-import { Container } from "./styles";
+//import { Container } from "./styles";
 import { useEffect } from "react";
 
-import { apiSoccer } from "../../services/api";
+import './styles.scss';
 import axios from 'axios';
 
 export function Panel() {
@@ -29,6 +29,80 @@ export function Panel() {
   }
 
   return (
-    <Container>PANEL APLICACOES</Container>
+
+    <div className="timeline">
+      <div className="container left">
+        <div className="content">
+          <h2>2017</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container right">
+        <div className="content">
+          <h2>2016</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container right">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      <div className="container left">
+        <div className="content">
+          <h2>2015</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+    </div>
   )
 }
