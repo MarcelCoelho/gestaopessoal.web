@@ -24,8 +24,11 @@ interface TransactionsContextData {
   createTransaction: (transaction: TransactionInput) => Promise<void>;
   removeTransaction: (id: string) => void;
   removeAllTransactions: () => void;
-  getTransactionsByFatura: (fatura: string) => void;
+  getTransactionsByFatura: (mes: string, ano: string) => void;
+  filtrarTransactionsByFatura: (fatura: string) => void;
   getTransactionsByTipoPagamento: (fatura: string, tipoPagamentoId: string) => void;
+  gravarTransacoesPorFatura: (transacoes: Transaction[]) => void;
+  gravarTransacoesPorTipoPagamento: (transacoes: Transaction[]) => void;
   errorApi: string;
 }
 
@@ -43,10 +46,14 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   const [activeTransaction, setActiveTransaction] = useState("fatura");
   const [errorApi, setErrorApi] = useState('');
 
+  useEffect(() => {
+    getTransactions();
+  }, []);
+
   async function getTransactions() {
 
     try {
-      const response = await api.get<Transaction[]>("/items/FiltroFaturas");
+      const response = await api.get<Transaction[]>("/Transactions/faturasZip");
       setTransactions(response.data);
       setTransactionsByFatura(response.data);
       setErrorApi('');
@@ -56,9 +63,30 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     }
   }
 
-  useEffect(() => {
-    getTransactions();
-  }, []);
+  async function getTransactionsById(id: string) {
+    try {
+      const response = await api.get<Transaction>(`/Transactions/${id}`);
+      setTransactions([...transactions, response.data]);
+      setTransactionsByFatura([...transactionsByFatura, response.data]);
+      setErrorApi('');
+    }
+    catch (error) {
+      setErrorApi('Error: ' + error.message)
+    }
+  }
+
+  async function getTransactionsByFatura(mes: string, ano: string) {
+
+    try {
+      const response = await api.get<Transaction[]>(`/Transactions/${mes}/${ano}`);
+      setTransactions([...transactions, ...response.data]);
+      setTransactionsByFatura([...transactions, ...response.data]);
+      setErrorApi('');
+    }
+    catch (error) {
+      setErrorApi('Error: ' + error.message)
+    }
+  }
 
   async function createTransaction(transactionInput: TransactionInput) {
     const dateTransaction: Date = new Date(transactionInput.data);
@@ -78,39 +106,57 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       let transactionPost = transactionInput;
       var fatura: Fatura;
 
-      if (i > 1) {
-        order += 1;
-        fatura = getFatura(null, order);
-      }
-      else {
-        fatura = faturaRecuperada;
-      }
+      fatura = recuperarFatura(i, order, faturaRecuperada);
 
-      let dateString = new Date(transactionPost.data).toUTCString();
-      dateString = dateString.split(' ').slice(0, 4).join(' ');
+      AtualizarDadosPeticao(contadorParcelas, dateTransaction, i, fatura, transactionPost);
 
-      transactionPost.data = new Date(dateString);
+      const response = await GravarTransacao(transactionPost);
 
-      transactionPost.numeroParcela = contadorParcelas;
-      transactionPost.data = addData(dateTransaction, i);
-      transactionPost.dataTexto = transactionPost.data.toDateString();
-      transactionPost.faturaId = fatura.id;
+      const transaction = response.data;
 
-      const response = await api.post("/items",
-        {
-          ...transactionPost,
-          usuarioCriacao: 'web',
-          usuarioModificacao: 'web'
-        });
+      const _transactions = [...transactions];
+      _transactions.unshift(transaction);
 
-      const { transaction } = response.data;
+      setTransactions([]);
+      setTransactions(_transactions);
 
-      setTransactions([...transactions, transaction]);
-      await getTransactions();
+      console.log(_transactions);
+
+      await getTransactionsById(transaction.id);
       contadorParcelas++;
     }
+  }
 
+  function recuperarFatura(i, order, faturaRecuperada) {
+    var fatura: Fatura;
 
+    if (i > 1) {
+      order += i - 1;
+      fatura = getFatura(null, order);
+    }
+    else {
+      fatura = faturaRecuperada;
+    }
+
+    return fatura;
+  }
+
+  function AtualizarDadosPeticao(contadorParcelas, dateTransaction, i, fatura, transactionPost: TransactionInput) {
+    transactionPost.numeroParcela = contadorParcelas;
+    transactionPost.data = addData(dateTransaction, i);
+    transactionPost.dataTexto = transactionPost.data.toDateString();
+    transactionPost.faturaId = fatura.id;
+  }
+
+  async function GravarTransacao(transactionPost: TransactionInput) {
+    const response = await api.post<Transaction>("/transactions",
+      {
+        ...transactionPost,
+        usuarioCriacao: 'web',
+        usuarioModificacao: 'web'
+      });
+
+    return response;
   }
 
   function addData(date: Date, addMeses: number) {
@@ -136,15 +182,18 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   }
 
   async function remove(id: string) {
-    await api.delete(`/items/${id}`)
+    await api.delete(`/transactions/${id}`)
 
     const arrayTransactions = arraysDelete(id, transactions);
+    setTransactions([]);
     setTransactions(arrayTransactions);
 
     const arrayTransactionsByFatura = arraysDelete(id, transactionsByFatura);
+    setTransactionsByFatura([]);
     setTransactionsByFatura(arrayTransactionsByFatura);
 
     const arrayTransactionByTipoPagamento = arraysDelete(id, transactionsByTipoPagamento);
+    setTransactionsByTipoPagamento([]);
     setTransactionsByTipoPagamento(arrayTransactionByTipoPagamento);
   }
 
@@ -177,7 +226,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     setTransactions([]);
   }
 
-  function getTransactionsByFatura(fatura: string) {
+  function filtrarTransactionsByFatura(fatura: string) {
 
     setActiveTransaction("fatura");
 
@@ -228,6 +277,16 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
   }
 
+  function gravarTransacoesPorFatura(transacoes: Transaction[]) {
+    setTransactionsByFatura([]);
+    setTransactionsByFatura(transacoes);
+  }
+
+  function gravarTransacoesPorTipoPagamento(transacoes: Transaction[]) {
+    setTransactionsByTipoPagamento([]);
+    setTransactionsByTipoPagamento(transacoes);
+  }
+
   return (
     <TransactionsContext.Provider
       value={{
@@ -239,7 +298,10 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
         removeTransaction,
         removeAllTransactions,
         getTransactionsByFatura,
+        filtrarTransactionsByFatura,
         getTransactionsByTipoPagamento,
+        gravarTransacoesPorFatura,
+        gravarTransacoesPorTipoPagamento,
         errorApi
       }}
     >

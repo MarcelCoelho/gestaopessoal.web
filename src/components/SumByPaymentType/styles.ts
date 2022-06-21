@@ -13,15 +13,16 @@ export const Component = styled.div<ComponentProps>`
   width: 8rem;
   height: 3.5rem;
   
-  background: ${(props) => props.active ? (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "gray")): "var(--shape)"};
+  background: ${(props) => props.active ? (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "gray")) : "var(--shape)"};
   border-radius: 1rem;
   border: solid 0.15rem;
-  border-color: ${(props) => props.active ? "var(--black)" : (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "var(--cinza)"))};
+  border-color: ${(props) => props.active ? "var(--black)" : (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "var(--cinza)"))};
 
   &:hover {
-    background:  ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)": "var(--cinza)"))};
+    background:  ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "var(--cinza)"))};
     border-color: var(--black);
     filter: brightness(0.8);
+    transition: 1s;
   } 
    
   display: grid;

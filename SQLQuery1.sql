@@ -10,13 +10,13 @@ from dbo.items i
 	  on tp.id = i.TipoPagamentoId
 	 inner join dbo.Faturas f 
 	  on f.id = i.FaturaId
-where i.Loja = '1001 Festas'
-order by i.Data;
+--where i.Loja = 'Posto Del Rey'
+order by i.DataCriacao desc;
 
-update Items set Valor = '4.99'
-where Id = 'D5F7A6DD-769D-4D31-D75B-08D9F0EA4CAF';
+update Items set Observacao = 'Eu + Sheila - Diamantina - (Dia dos namorados)'
+where Id = '039DFAD8-660A-4110-DC2A-08DA4D419A9D';
 
 update Items set TipoPagamentoId = '5EB7D8F9-3701-43C1-3C1D-08D9DAF6C0A1'
-where Id = 'D5F7A6DD-769D-4D31-D75B-08D9F0EA4CAF';
+where Id = '12AA6E53-3F78-4034-DC24-08DA4D419A9D';
 
 select * from TiposPagamentos;

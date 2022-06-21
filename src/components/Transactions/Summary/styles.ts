@@ -36,10 +36,11 @@ export const Component = styled.div<ContainerProps>`
 
   div {
   &:hover {
-    background: ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "gray"))};
+   background: ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "gray"))};
     border-color: black;
     border: solid 0.15rem;
     filter: brightness(0.8);
+    transition: 1s;
   }
 
   background: var(--shape);
@@ -52,8 +53,8 @@ export const Component = styled.div<ContainerProps>`
   border: solid 0.3rem;
   border-color: ${(props) => (props.fechada ? "var(--red-tomato)" : (props.atual ? "var(--green-light)" : "gray"))};
 
-  width: ${(props) => (props.active ? "8rem" : "10rem" )};
-  height: ${(props) => (props.active ? "8rem" : "10rem" )};
+  width: ${(props) => (props.active ? "8rem" : "10rem")};
+  height: ${(props) => (props.active ? "8rem" : "10rem")};
   border-radius: 50%;
 
   header {
@@ -63,8 +64,8 @@ export const Component = styled.div<ContainerProps>`
 
   main {      
     display: flex;
-    width: ${(props) => (props.active ? "5rem" : "7rem" )};
-    font-size: ${(props) => (props.active ? "0.36rem" : "0.5rem" )};
+    width: ${(props) => (props.active ? "5rem" : "7rem")};
+    font-size: ${(props) => (props.active ? "0.36rem" : "0.5rem")};
     margin-top: 0.2rem;
   }
 
@@ -72,16 +73,16 @@ export const Component = styled.div<ContainerProps>`
     display: flex;
     justify-content: center;
     margin-top: 1rem;      
-    font-size: ${(props) => (props.active ? "0.8rem" : "1rem" )};      
+    font-size: ${(props) => (props.active ? "0.8rem" : "1rem")};      
     font-weight: 500;
-    line-height: ${(props) => (props.active ? "1rem" : "2rem" )};
+    line-height: ${(props) => (props.active ? "1rem" : "2rem")};
   }
 
   strong {
     display: flex;
     justify-content: center;
     font-weight: 400;
-    font-size: ${(props) => (props.active ? "0.6rem" : "0.8rem" )};
+    font-size: ${(props) => (props.active ? "0.6rem" : "0.8rem")};
   }
 
   &.highlight-background {

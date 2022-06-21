@@ -10,9 +10,10 @@ export const Barra = styled.div`
   justify-content: space-between;
   margin-left: 0.5rem;
 `;
+
 export const Search = styled.div`
   input {
-    width: 25rem;
+    width: 28rem;
     height: 3rem;
     border: none;
     padding: 0.5rem;

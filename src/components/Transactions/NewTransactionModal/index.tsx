@@ -112,7 +112,7 @@ export function NewTransactionModal({
       observacao,
       faturaId: _faturaId,
       tipoPagamentoId: _tipoPagamentoId,
-      check
+      check: true
     });
 
     setData(new Date());

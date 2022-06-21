@@ -1,17 +1,17 @@
+import { useEffect, useState } from 'react';
+
+import { Content, Component, ContentTipoPagamento } from "./styles";
+
 import { useTransactions } from '../../../hooks/useTransactions';
 import { useFaturas } from '../../../hooks/useFaturas';
 import { useTiposPagamentos } from '../../../hooks/useTiposPagamentos';
 import { SumByPaymentType } from '../../../components/SumByPaymentType';
 
-
-import { Content, Component, ContentTipoPagamento } from "./styles";
-import { useEffect, useState } from 'react';
-
-import { TotalFatura } from '../../../types';
+import { Transaction, TotalFatura } from '../../../types';
 
 export function Summary() {
-  const { transactionsByFatura, getTransactionsByFatura } = useTransactions();
   const { faturas, updateTipoPagamentoOn } = useFaturas();
+  const { transactions, gravarTransacoesPorFatura, gravarTransacoesPorTipoPagamento } = useTransactions();
   const { tiposPagamentos } = useTiposPagamentos();
 
   const [items, setItems] = useState<TotalFatura[]>([]);
@@ -21,16 +21,50 @@ export function Summary() {
 
   const [filtro, setFiltro] = useState(false);
 
+  const [transactionsByFatura, setTransactionsByFatura] = useState<Transaction[]>([]);
+
   useEffect(() => {
-    getTotalPorFatura();
-    getTotalByTipoPagamento();
-  }, [transactionsByFatura])
+    get();
+  }, [transactions, faturas, tiposPagamentos])
 
-  let arrayAgrupadoPorFatura: TotalFatura[] = [];
-  let agrupadorFaturaByTipoPagamento: TotalFatura[] = [];
+  async function get() {
+    filtrarTransactionsByFatura(null, false);
+    getTotalPorFatura([]);
+  }
 
-  function arrayByFatura() {
+  function filtrarTransactionsByFatura(descricaoFatura: string, ativo: boolean) {
 
+    setTransactionsByFatura([]);
+
+    if (descricaoFatura !== null && descricaoFatura !== undefined && descricaoFatura !== '') {
+      var array = [];
+
+      const dataAtual = new Date();
+      array = transactions.filter(function (transaction) {
+        transaction.fatura.atual =
+          (dataAtual >= new Date(transaction.fatura.dataInicio) &&
+            dataAtual < new Date(transaction.fatura.dataFinal));
+        return transaction.fatura.observacao === descricaoFatura;
+      });
+
+      setTransactionsByFatura(array);
+      getTotalByTipoPagamento(array, ativo);
+      getTotalPorFatura(array);
+      gravarTransacoesPorFatura(array);
+      gravarTransacoesPorTipoPagamento(array);
+    }
+    else {
+      setTransactionsByFatura(transactions);
+      getTotalByTipoPagamento(transactions, ativo);
+      getTotalPorFatura(transactions);
+      gravarTransacoesPorFatura(transactions);
+      gravarTransacoesPorTipoPagamento(transactions);
+    }
+  }
+
+  function getArrayByFatura(array: Transaction[]) {
+
+    let arrayAgrupadoPorFatura: TotalFatura[] = [];
     let idNumber = 1;
     faturas.forEach(fatura => {
       const descricao = fatura.observacao;
@@ -54,7 +88,15 @@ export function Summary() {
 
       idNumber++;
 
-      transactionsByFatura.forEach(transaction => {
+      let arrayTransactions: Transaction[] = [];
+      if (array != null && array.length > 0)
+        arrayTransactions = array;
+      else if (transactionsByFatura != null && transactionsByFatura.length > 0)
+        arrayTransactions = transactionsByFatura
+      else
+        arrayTransactions = transactions;
+
+      arrayTransactions.forEach(transaction => {
         if (transaction.fatura.observacao === item.descricao) {
           item.total += Number(transaction.valor);
           item.quantidade += 1;
@@ -69,22 +111,20 @@ export function Summary() {
     return arrayAgrupadoPorFatura;
   }
 
-  function arrayOrdenado() {
+  function getArrayOrdenado(array: TotalFatura[]) {
     let arrayFiltrado = [];
 
-    if (arrayAgrupadoPorFatura.length > 1) {
+    if (array && array.length > 1) {
 
-      const faturaAtual: TotalFatura[] = arrayAgrupadoPorFatura.filter(arr => {
+      const faturaAtual: TotalFatura[] = array.filter(arr => {
         return (arr.atual === true);
       });
 
-      const faturaAnteriorAtual: TotalFatura[] = arrayAgrupadoPorFatura.filter(arr => {
+      const faturaAnteriorAtual: TotalFatura[] = array.filter(arr => {
         return (arr.orden === faturaAtual[0].orden - 1);
       });
 
-
-
-      arrayAgrupadoPorFatura.forEach(arr => {
+      array.forEach(arr => {
         if (arr.orden > faturaAtual[0].orden && arr.orden <= faturaAtual[0].orden + 3) {
           arrayFiltrado.push(arr);
         }
@@ -96,16 +136,20 @@ export function Summary() {
       if (faturaAnteriorAtual !== undefined)
         arrayFiltrado.unshift(faturaAnteriorAtual[0]);
 
-      arrayAgrupadoPorFatura = []
-      arrayAgrupadoPorFatura = arrayFiltrado;
+      array = []
+      array = arrayFiltrado;
+      return array;
     }
+    return array;
   }
 
-  function getTotalPorFatura() {
+  function getTotalPorFatura(array: Transaction[]) {
 
-    arrayByFatura();
-    arrayOrdenado();
-    setItems(arrayAgrupadoPorFatura);
+    const resultadoArray = getArrayByFatura(array);
+    const arrayOrdenado = getArrayOrdenado(resultadoArray);
+
+    setItems([]);
+    setItems(arrayOrdenado);
 
   }
 
@@ -113,20 +157,20 @@ export function Summary() {
     if (itemSelecionado === descricao) {
       setFiltro(false);
       setItemSelecionado(null);
-      getTransactionsByFatura(null);
+      filtrarTransactionsByFatura(null, false);
     }
     else {
       setFiltro(true);
       setItemSelecionado(descricao);
-      getTransactionsByFatura(descricao);
+      filtrarTransactionsByFatura(descricao, true);
     }
+
     updateTipoPagamentoOn(null);
   }
 
-  function handleNext() {
+  /*function handleNext() {
 
-    let array: TotalFatura[] = [];
-    array = [...items];
+    let array: TotalFatura[] = [...items];
 
     const lastArray = array[array.length - 1];
     arrayByFatura();
@@ -142,9 +186,27 @@ export function Summary() {
       setItems([]);
       setItems(array);
     }
+  }*/
+
+  function handleBuscarProximaFatura() {
+    let array: TotalFatura[] = [...items];
+
+    const ultimaFaturaListada = array[array.length - 1];
+    const mes = ultimaFaturaListada.orden.toString();
+    const ano = ultimaFaturaListada.descricao.split('/')[1];
+
+    // getTransactionsByFatura(mes, ano);
   }
 
-  function handlePrevious() {
+  function handleBuscarFaturaAnterior() {
+    let array: TotalFatura[] = [...items];
+
+    const primeiraFaturaListada = array[0];
+    const mes = primeiraFaturaListada.orden;
+    const ano = primeiraFaturaListada.descricao.split('/')[1];
+  }
+
+  /*function handlePrevious() {
     let array: TotalFatura[] = [];
     array = [...items];
 
@@ -162,9 +224,11 @@ export function Summary() {
       setItems([]);
       setItems(array);
     }
-  }
+  }*/
 
-  function getTotalByTipoPagamento() {
+  function getTotalByTipoPagamento(array: Transaction[], ativo: boolean) {
+    setItemsPagamentos([]);
+    let agrupadorFaturaByTipoPagamento: TotalFatura[] = [];
 
     tiposPagamentos.forEach(tp => {
 
@@ -180,7 +244,7 @@ export function Summary() {
         orden: 0
       };
 
-      transactionsByFatura.forEach(transaction => {
+      array.forEach(transaction => {
         if (transaction.tipoPagamentoId === item.id) {
           item.total += Number(transaction.valor);
           item.quantidade += 1;
@@ -196,14 +260,9 @@ export function Summary() {
     if (agrupadorFaturaByTipoPagamento.length > 0) {
       agrupadorFaturaByTipoPagamento.sort((a, b) => Number(b.total) - Number(a.total));
 
-      if (filtro)
+      if (ativo === true)
         setItemsPagamentos(agrupadorFaturaByTipoPagamento);
-      else
-        setItemsPagamentos([]);
     }
-    else
-      setItemsPagamentos([]);
-
   }
 
   return (
@@ -211,7 +270,7 @@ export function Summary() {
     <Content className="contentSummary">
 
       {items.length > 0 &&
-        <button onClick={handlePrevious}>
+        <button onClick={handleBuscarFaturaAnterior}>
           <span>{'<'}</span>
         </button>
       }
@@ -245,7 +304,7 @@ export function Summary() {
       ))}
 
       {items.length > 0 && !filtro &&
-        <button onClick={handleNext}>
+        <button onClick={handleBuscarProximaFatura}>
           <span>{'>'}</span>
         </button>
       }

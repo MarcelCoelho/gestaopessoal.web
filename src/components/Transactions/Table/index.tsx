@@ -3,35 +3,11 @@ import { useTransactions } from "../../../hooks/useTransactions";
 import { FiTrash, FiTrash2 } from "react-icons/fi";
 
 import { Container, Search, Barra, Total, ContentTable } from "./styles";
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState } from "react";
 
 import { Checkbox } from "@material-ui/core";
 
 import { Transaction } from '../../../types';
-/*interface Transaction {
-  id: string;
-  data: Date;
-  produto: string;
-  loja: string;
-  local: string;
-  numeroParcela: number;
-  quantidadeParcelas: number;
-  fatura: {
-    observacao: string;
-  };
-  tipoPagamento: {
-    descricao: string;
-  };
-  valor: string;
-  observacao: string;
-  faturaId: string
-  tipoPagamentoId: string;
-  usuarioCriacao: string;
-  usuarioModificacao: string;
-  dataCriacao: Date;
-  dataModificacao: Date;
-  check: boolean;
-}*/
 
 export function Table() {
   const {
@@ -111,6 +87,8 @@ export function Table() {
 
         itemEncontrado = false;
 
+        setParamPesquisa("");
+
       });
 
       if (arrayItems.length > 0) {
@@ -118,11 +96,15 @@ export function Table() {
         SumTransactions(arrayItems);
       }
 
-      setParamPesquisa("");
     }
     else {
       setItemsByFaturaOrTipoPagamento();
     }
+
+    const input = document.querySelector("input");
+    input.addEventListener("click", function () {
+      this.select();
+    })
   }
 
   function SumTransactions(array: Transaction[]) {
@@ -159,7 +141,7 @@ export function Table() {
         counterFalse += 1;
       }
 
-      if (counterFalse == 0)
+      if (counterFalse === 0)
         setHeaderChecked(true);
 
       newItems.push(item);
@@ -183,7 +165,7 @@ export function Table() {
           <Barra>
             <Search className="searchData">
               <input
-                placeholder="Começe a escrever para pesquisar..."
+                placeholder="Escreva o que deseja pesquisar e clique Enter/Ir..."
                 value={paramPesquisa}
                 onChange={(event) => setParamPesquisa(event.target.value)}
                 onKeyPress={handleKeypress}
