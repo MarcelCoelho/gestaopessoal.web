@@ -5,7 +5,7 @@ import {
   ReactNode,
   useContext
 } from "react";
-import { api } from "../services/api";
+import { apiNet6 } from "../services/api";
 import { Fatura } from '../types';
 
 type FaturaInput = Omit<Fatura, "id" | "orden" | "atual" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
@@ -42,7 +42,7 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
   async function getFaturas() {
 
     if (updateData) {
-      const response = await api.get<Fatura[]>("/Faturas");
+      const response = await apiNet6.get<Fatura[]>("/api/Fatura");
 
       let faturasTemp: Fatura[] = response.data;
 
@@ -61,7 +61,7 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
   }
 
   async function createFatura(FaturaInput: FaturaInput) {
-    await api.post("/Faturas", {
+    await apiNet6.post("/api/Fatura", {
       ...FaturaInput,
       orden: 0,
       usuarioCriacao: 'web',
@@ -72,7 +72,7 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
   }
 
   async function updateCloseFatura(id: string) {
-    await api.put(`/fatura/${id}`);
+    await apiNet6.put(`/api/Fatura/${id}`);
     setUpdateData(true);
   }
 

@@ -5,7 +5,7 @@ import {
   ReactNode,
   useContext,
 } from "react";
-import { api } from "../services/api";
+import { apiNet6 } from "../services/api";
 
 interface TipoPagamento {
   id: string;
@@ -43,7 +43,7 @@ export function TiposPagamentosProvider({ children }: TipoPagamentoProviderProps
 
   async function getTiposPagamentos() {
     if (updateData) {
-      const response = await api.get<TipoPagamento[]>("/tiposPagamentos");
+      const response = await apiNet6.get<TipoPagamento[]>("/api/TipoPagamento");
       setTiposPagamentos(response.data);
       setUpdateData(false);
     }
@@ -55,7 +55,7 @@ export function TiposPagamentosProvider({ children }: TipoPagamentoProviderProps
 
   async function createTipoPagamento(tipoPagamentoInput: TipoPagamentoInput) {
 
-    const response = await api.post("/tiposPagamentos",
+    const response = await apiNet6.post("/api/TipoPagamento",
       {
         ...tipoPagamentoInput,
         usuarioCriacao: 'web',
@@ -70,7 +70,7 @@ export function TiposPagamentosProvider({ children }: TipoPagamentoProviderProps
 
   async function removeTipoPagamento(id: string) {
 
-    await api.delete(`/tiposPagamentos/${id}`)
+    await apiNet6.delete(`/api/TipoPagamento/${id}`)
 
     var array = [...tiposPagamentos]; // make a separate copy of the array
 
