@@ -1,6 +1,7 @@
 import "react-datepicker/dist/react-datepicker.css";
 
-import logoImg from "../../assets/logo3.png";
+//import logoImg from "../../assets/logo3.png";
+import { Perfil } from "../Perfil";
 
 import { Container, Content, LinkButton } from "./styles";
 
@@ -41,10 +42,12 @@ export function Header({
   return (
     <Container>
       <Content>
-        <div className="header">
-          <img src={logoImg} alt="mfcmoney" />
-          <span>Controle de Gastos</span>
-        </div>
+        <Perfil />
+
+        {/*<div className="header">
+          <img src="https://avatars.githubusercontent.com/u/39440678?v=4" />
+          <span>Gastos</span>
+  </div>*/}
 
         <div>
           <div className="newPage">
@@ -78,7 +81,7 @@ export function Header({
               className="buttonEntity"
               onClick={onOpenTransaction}
               hidden={!showButtonTransacction}>
-              <LinkButton to="/dashboard" > Dashboard </LinkButton>
+              <LinkButton to="/transacoes" > Transacoes </LinkButton>
             </button>
           </div>
 

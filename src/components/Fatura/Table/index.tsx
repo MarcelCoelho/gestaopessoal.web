@@ -6,15 +6,24 @@ import { Container, Tr } from "./styles";
 import { Checkbox } from "@material-ui/core";
 
 import { TableStandard } from '../../TableStandard';
+import { ChangeEvent } from "react";
 
 export function Table() {
   const {
     faturas,
-    updateCloseFatura,
+    putFaturaFechada,
+    putFaturaAtual,
     removeAllFaturas,
     removeFatura
   } = useFaturas();
 
+  function handleOnChangeFaturaFechada(e: ChangeEvent<HTMLInputElement>, id: string) {
+    putFaturaFechada(id, Boolean(e.target.checked))
+  }
+
+  function handleOnChangeFaturaAtual(e, id: string) {
+    putFaturaAtual(id, e.target.checked)
+  }
 
   return (
     <Container>
@@ -27,6 +36,7 @@ export function Table() {
               <th>De</th>
               <th>Até</th>
               <th>Fechada</th>
+              <th>Atual</th>
               <th className="close">
                 <FiTrash
                   size="20"
@@ -52,7 +62,18 @@ export function Table() {
                   <td className="title">{new Intl.DateTimeFormat().format(
                     new Date(fatura.dataFinal)
                   )}</td>
-                  <td className="title"><Checkbox value={fatura.fechada} checked={fatura.fechada} onClick={() => updateCloseFatura(fatura.id)} /></td>
+                  <td className="title">
+                    <Checkbox
+                      value={fatura.fechada}
+                      checked={fatura.fechada}
+                      onChange={(e) => handleOnChangeFaturaFechada(e, fatura.id)} />
+                  </td>
+                  <td className="title">
+                    <Checkbox
+                      value={fatura.atual}
+                      checked={fatura.atual}
+                      onChange={(e) => handleOnChangeFaturaAtual(e, fatura.id)} />
+                  </td>
                   <td className="close">
                     <FiTrash2
                       size="18"

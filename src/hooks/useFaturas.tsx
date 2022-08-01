@@ -8,7 +8,7 @@ import {
 import { apiNet6 } from "../services/api";
 import { Fatura } from '../types';
 
-type FaturaInput = Omit<Fatura, "id" | "orden" | "atual" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
+type FaturaInput = Omit<Fatura, "id" | "ordem" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
 interface FaturaProviderProps {
   children: ReactNode;
@@ -17,7 +17,8 @@ interface FaturaProviderProps {
 interface FaturasContextData {
   faturas: Fatura[];
   createFatura: (fatura: FaturaInput) => Promise<void>;
-  updateCloseFatura: (id: string) => void;
+  putFaturaFechada: (id: string, fechada: boolean) => void;
+  putFaturaAtual: (id: string, atual: boolean) => void;
   removeFatura: (id: string) => void;
   removeAllFaturas: () => void;
   updateTipoPagamentoOn: (descricao: string) => void;
@@ -44,14 +45,15 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
     if (updateData) {
       const response = await apiNet6.get<Fatura[]>("/api/Fatura");
 
-      let faturasTemp: Fatura[] = response.data;
+      //let faturasTemp: Fatura[] = response.data;
 
-      faturasTemp.forEach(fat => {
+      /*faturasTemp.forEach(fat => {
         fat.atual = (new Date() >= new Date(fat.dataInicio) &&
           new Date() <= new Date(fat.dataFinal));
-      });
+      });*/
 
-      setFaturas(faturasTemp);
+      //setFaturas(faturasTemp);
+      setFaturas(response.data);
       setUpdateData(false);
     }
   }
@@ -63,7 +65,7 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
   async function createFatura(FaturaInput: FaturaInput) {
     await apiNet6.post("/api/Fatura", {
       ...FaturaInput,
-      orden: 0,
+      ordem: faturas.length + 1,
       usuarioCriacao: 'web',
       usuarioModificacao: 'web'
     });
@@ -71,8 +73,23 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
     setUpdateData(true);
   }
 
-  async function updateCloseFatura(id: string) {
-    await apiNet6.put(`/api/Fatura/${id}`);
+  async function putFaturaFechada(id: string, fechada: boolean) {
+    const fatura = faturas.filter(function (fat) {
+      return fat.id === id;
+    });
+
+    //await apiNet6.put(`/api/Fatura/${id}`, fatura);
+    await apiNet6.put(`/api/Fatura/Fechada/${id}/${fechada}`);
+    setUpdateData(true);
+  }
+
+  async function putFaturaAtual(id: string, atual: boolean) {
+    const fatura = faturas.filter(function (fat) {
+      return fat.id === id;
+    });
+
+    //await apiNet6.put(`/api/Fatura/${id}`, fatura);
+    await apiNet6.put(`/api/Fatura/Atual/${id}/${atual}`);
     setUpdateData(true);
   }
 
@@ -99,7 +116,8 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
       value={{
         faturas,
         createFatura,
-        updateCloseFatura,
+        putFaturaFechada,
+        putFaturaAtual,
         removeFatura,
         removeAllFaturas,
         updateTipoPagamentoOn,

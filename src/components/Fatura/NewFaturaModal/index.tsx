@@ -32,6 +32,7 @@ export function NewFaturaModal({
   const [dataInicio, setDataInicio] = useState(new Date());
   const [dataFinal, setDataFinal] = useState(new Date());
   const [fechada, setFechada] = useState(false);
+  const [atual, setAtual] = useState(false);
 
   async function handleCreateNewTipoPagamento(event: FormEvent) {
     event.preventDefault();
@@ -45,7 +46,8 @@ export function NewFaturaModal({
       dataInicio,
       dataFinal,
       fechada,
-      observacao
+      observacao,
+      atual
     });
 
     setPeriodo("");
@@ -53,6 +55,7 @@ export function NewFaturaModal({
     setDataInicio(new Date());
     setDataFinal(new Date());
     setFechada(false);
+    setAtual(false);
 
     onRequestClose();
   }
@@ -107,6 +110,11 @@ export function NewFaturaModal({
           <Checkbox
             value={fechada}
             onChange={(event) => setFechada(Boolean(event.target.value))}
+          />
+
+          <Checkbox
+            value={atual}
+            onChange={(event) => setAtual(Boolean(event.target.value))}
           />
 
           <button type="submit">Cadastrar</button>

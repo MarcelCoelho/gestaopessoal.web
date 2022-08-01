@@ -4,7 +4,7 @@ export type Fatura = {
   ano: string;
   dataInicio: Date;
   dataFinal: Date;
-  orden: number;
+  ordem: number;
   fechada: boolean;
   observacao: string;
   usuarioCriacao: string;
@@ -37,7 +37,7 @@ export type Transaction = {
   fatura: {
     ano: string;
     observacao: string;
-    orden: number;
+    ordem: number;
     fechada: boolean;
     atual: boolean;
     dataInicio: Date;
@@ -50,11 +50,12 @@ export type Transaction = {
   observacao: string;
   faturaId: string
   tipoPagamentoId: string;
+  usuarioId: string;
   usuarioCriacao: string;
   usuarioModificacao: string;
   dataCriacao: Date;
   dataModificacao: Date;
-  check: boolean;
+  estaSelecionado: boolean;
 }
 
 export type TotalFatura = {
@@ -64,7 +65,7 @@ export type TotalFatura = {
   fim: Date,
   fechada: boolean,
   atual: boolean,
-  orden: number,
+  ordem: number,
   quantidade: number,
   total: number
 }

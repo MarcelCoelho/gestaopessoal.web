@@ -72,7 +72,7 @@ export function Summary() {
       const fim = fatura.dataFinal;
       const fechada = fatura.fechada;
       const atual = fatura.atual;
-      const orden = fatura.orden;
+      const ordem = fatura.ordem;
 
       let item: TotalFatura = {
         id: (idNumber).toString(),
@@ -81,7 +81,7 @@ export function Summary() {
         fim,
         fechada,
         atual,
-        orden,
+        ordem,
         quantidade: 0,
         total: 0
       };
@@ -97,7 +97,7 @@ export function Summary() {
         arrayTransactions = transactions;
 
       arrayTransactions.forEach(transaction => {
-        if (transaction.fatura.observacao === item.descricao) {
+        if (transaction.fatura.observacao === item.descricao && transaction.estaSelecionado) {
           item.total += Number(transaction.valor);
           item.quantidade += 1;
         }
@@ -120,22 +120,23 @@ export function Summary() {
         return (arr.atual === true);
       });
 
-      const faturaAnteriorAtual: TotalFatura[] = array.filter(arr => {
-        return (arr.orden === faturaAtual[0].orden - 1);
-      });
+      if (faturaAtual != undefined && faturaAtual.length > 0) {
+        const faturaAnteriorAtual: TotalFatura[] = array.filter(arr => {
+          return (arr.ordem === faturaAtual[0].ordem - 1);
+        });
 
-      array.forEach(arr => {
-        if (arr.orden > faturaAtual[0].orden && arr.orden <= faturaAtual[0].orden + 3) {
-          arrayFiltrado.push(arr);
-        }
-      });
+        array.forEach(arr => {
+          if (arr.ordem > faturaAtual[0].ordem && arr.ordem <= faturaAtual[0].ordem + 3) {
+            arrayFiltrado.push(arr);
+          }
+        });
 
-      if (faturaAtual[0] !== undefined)
-        arrayFiltrado.unshift(faturaAtual[0]);
+        if (faturaAtual[0] !== undefined)
+          arrayFiltrado.unshift(faturaAtual[0]);
 
-      if (faturaAnteriorAtual !== undefined)
-        arrayFiltrado.unshift(faturaAnteriorAtual[0]);
-
+        if (faturaAnteriorAtual !== undefined && faturaAnteriorAtual.length > 0)
+          arrayFiltrado.unshift(faturaAnteriorAtual[0]);
+      }
       array = []
       array = arrayFiltrado;
       return array;
@@ -192,7 +193,7 @@ export function Summary() {
     let array: TotalFatura[] = [...items];
 
     const ultimaFaturaListada = array[array.length - 1];
-    const mes = ultimaFaturaListada.orden.toString();
+    const mes = ultimaFaturaListada.ordem.toString();
     const ano = ultimaFaturaListada.descricao.split('/')[1];
 
     // getTransactionsByFatura(mes, ano);
@@ -202,7 +203,7 @@ export function Summary() {
     let array: TotalFatura[] = [...items];
 
     const primeiraFaturaListada = array[0];
-    const mes = primeiraFaturaListada.orden;
+    const mes = primeiraFaturaListada.ordem;
     const ano = primeiraFaturaListada.descricao.split('/')[1];
   }
 
@@ -241,11 +242,11 @@ export function Summary() {
         total: 0,
         fechada: false,
         atual: false,
-        orden: 0
+        ordem: 0
       };
 
       array.forEach(transaction => {
-        if (transaction.tipoPagamentoId === item.id) {
+        if (transaction.tipoPagamentoId === item.id && transaction.estaSelecionado) {
           item.total += Number(transaction.valor);
           item.quantidade += 1;
           item.atual = transaction.fatura.atual;

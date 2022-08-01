@@ -5,12 +5,13 @@ import {
   ReactNode,
   useContext,
 } from "react";
-import { api } from "../services/api";
+import { apiNet6 } from "../services/api";
 import { useFaturas } from "./useFaturas";
 
-import { Transaction, Fatura } from '../types';
+import { Transaction, Fatura, TipoPagamento } from '../types';
+import { useTiposPagamentos } from "./useTiposPagamentos";
 
-type TransactionInput = Omit<Transaction, "id" | "tipoPagamento" | "fatura" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
+type TransactionInput = Omit<Transaction, "id" | "usuario" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
 interface TransactionProviderProps {
   children: ReactNode;
@@ -24,7 +25,7 @@ interface TransactionsContextData {
   createTransaction: (transaction: TransactionInput) => Promise<void>;
   removeTransaction: (id: string) => void;
   removeAllTransactions: () => void;
-  getTransactionsByFatura: (mes: string, ano: string) => void;
+  //getTransactionsByFatura: (mes: string, ano: string) => void;
   filtrarTransactionsByFatura: (fatura: string) => void;
   getTransactionsByTipoPagamento: (fatura: string, tipoPagamentoId: string) => void;
   gravarTransacoesPorFatura: (transacoes: Transaction[]) => void;
@@ -39,6 +40,7 @@ const TransactionsContext = createContext<TransactionsContextData>(
 export function TransactionsProvider({ children }: TransactionProviderProps) {
 
   const { faturas } = useFaturas();
+  const { tiposPagamentos } = useTiposPagamentos();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [transactionsByFatura, setTransactionsByFatura] = useState<Transaction[]>([]);
@@ -53,7 +55,9 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   async function getTransactions() {
 
     try {
-      const response = await api.get<Transaction[]>("/Transactions/faturasZip");
+      const usuario = "marcelfillipe@hotmail.com";
+
+      const response = await apiNet6.get<Transaction[]>(`/api/transacao/PorUsuario/${usuario}`);
       setTransactions(response.data);
       setTransactionsByFatura(response.data);
       setErrorApi('');
@@ -65,7 +69,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
   async function getTransactionsById(id: string) {
     try {
-      const response = await api.get<Transaction>(`/Transactions/${id}`);
+      const response = await apiNet6.get<Transaction>(`/api/transacao/${id}`);
       setTransactions([...transactions, response.data]);
       setTransactionsByFatura([...transactionsByFatura, response.data]);
       setErrorApi('');
@@ -75,10 +79,10 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     }
   }
 
-  async function getTransactionsByFatura(mes: string, ano: string) {
+  /*async function getTransactionsByFatura(mes: string, ano: string) {
 
     try {
-      const response = await api.get<Transaction[]>(`/Transactions/${mes}/${ano}`);
+      const response = await apiNet6.get<Transaction[]>(`/api/transacao/${mes}/${ano}`);
       setTransactions([...transactions, ...response.data]);
       setTransactionsByFatura([...transactions, ...response.data]);
       setErrorApi('');
@@ -86,13 +90,14 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     catch (error) {
       setErrorApi('Error: ' + error.message)
     }
-  }
+  }*/
 
   async function createTransaction(transactionInput: TransactionInput) {
     const dateTransaction: Date = new Date(transactionInput.data);
 
     var faturaRecuperada: Fatura = getFatura(transactionInput.faturaId, 0);
-    let order = faturaRecuperada.orden;
+    var tipoPagamento: TipoPagamento = getTipoPagamento(transactionInput.tipoPagamentoId);
+    let ordem = faturaRecuperada.ordem;
 
     if (transactionInput.quantidadeParcelas === 0 || transactionInput.quantidadeParcelas === undefined) {
       transactionInput.numeroParcela = 1;
@@ -106,9 +111,9 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       let transactionPost = transactionInput;
       var fatura: Fatura;
 
-      fatura = recuperarFatura(i, order, faturaRecuperada);
+      fatura = recuperarFatura(i, ordem, faturaRecuperada);
 
-      AtualizarDadosPeticao(contadorParcelas, dateTransaction, i, fatura, transactionPost);
+      AtualizarDadosPeticao(contadorParcelas, dateTransaction, i, fatura, tipoPagamento, transactionPost);
 
       const response = await GravarTransacao(transactionPost);
 
@@ -141,15 +146,17 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     return fatura;
   }
 
-  function AtualizarDadosPeticao(contadorParcelas, dateTransaction, i, fatura, transactionPost: TransactionInput) {
+  function AtualizarDadosPeticao(contadorParcelas, dateTransaction, i, fatura, tipoPagamento, transactionPost: TransactionInput) {
     transactionPost.numeroParcela = contadorParcelas;
     transactionPost.data = addData(dateTransaction, i);
     transactionPost.dataTexto = transactionPost.data.toDateString();
     transactionPost.faturaId = fatura.id;
+    transactionPost.fatura = fatura;
+    transactionPost.tipoPagamento = tipoPagamento;
   }
 
   async function GravarTransacao(transactionPost: TransactionInput) {
-    const response = await api.post<Transaction>("/transactions",
+    const response = await apiNet6.post<Transaction>("/api/transacao",
       {
         ...transactionPost,
         usuarioCriacao: 'web',
@@ -172,17 +179,26 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
   }
 
-  function getFatura(id: string, orden: number) {
+  function getFatura(id: string, ordem: number) {
 
     var faturaById = faturas.filter(function (fatura) {
-      return fatura.id === id || fatura.orden === orden;
+      return fatura.id === id || fatura.ordem === ordem;
     })[0];
 
     return faturaById;
   }
 
+  function getTipoPagamento(id: string) {
+
+    var tipoPagamento = tiposPagamentos.filter(function (tp) {
+      return tp.id === id;
+    })[0];
+
+    return tipoPagamento;
+  }
+
   async function remove(id: string) {
-    await api.delete(`/transactions/${id}`)
+    await apiNet6.delete(`/api/transacao/${id}`)
 
     const arrayTransactions = arraysDelete(id, transactions);
     setTransactions([]);
@@ -297,7 +313,6 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
         createTransaction,
         removeTransaction,
         removeAllTransactions,
-        getTransactionsByFatura,
         filtrarTransactionsByFatura,
         getTransactionsByTipoPagamento,
         gravarTransacoesPorFatura,

@@ -20,7 +20,14 @@ export const Content = styled.div`
   }
 
   form {
-    
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: flex-start;
+
+    padding: 0.2rem;
+
     input {
       margin-top: 0.3rem;
       width: 100%;
@@ -42,14 +49,14 @@ export const Content = styled.div`
 
     button[type="submit"] {
       width: 100%;
-      padding: 0 1.5rem;
+      padding: 0;
       height: 4rem;
       background: var(--green);
       color: var(--shape);
       border-radius: 0.25rem;
       border: 0.1rem solid var(--blue);
       font-size: 1rem;
-      margin-top: 1.5rem;
+      margin-top: 0.5rem;
       font-weight: 600;
 
       transition: filter 0.2s;

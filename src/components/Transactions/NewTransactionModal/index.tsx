@@ -14,6 +14,7 @@ import { useTransactions } from "../../../hooks/useTransactions";
 import { Content } from "./styles";
 import { useTiposPagamentos } from "../../../hooks/useTiposPagamentos";
 import { useFaturas } from "../../../hooks/useFaturas";
+import { Checkbox } from "@material-ui/core";
 
 interface NewTransactionModalProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export function NewTransactionModal({
   const [quantidadeParcelas, setQuantidadeParcelas] = useState<number>();
   const [valor, setValor] = useState("");
   const [observacao, setObservacao] = useState("");
-  const [check, setCheck] = useState(true);
+  const [estaSelecionado, setEstaSelecionado] = useState(true);
 
   const [faturaId, setFaturaId] = useState("");
   const [tipoPagamentoId, setTipoPagamentoId] = useState("");
@@ -111,8 +112,21 @@ export function NewTransactionModal({
       valor: _valor,
       observacao,
       faturaId: _faturaId,
+      fatura: {
+        ano: "",
+        atual: false,
+        dataFinal: new Date(),
+        dataInicio: new Date(),
+        fechada: false,
+        observacao: "",
+        ordem: 0,
+      },
+      tipoPagamento: {
+        descricao: ""
+      },
       tipoPagamentoId: _tipoPagamentoId,
-      check: true
+      usuarioId: "marcelfillipe@hotmail.com",
+      estaSelecionado
     });
 
     setData(new Date());
@@ -125,7 +139,7 @@ export function NewTransactionModal({
     setObservacao("");
     setFaturaId("");
     setTipoPagamentoId("");
-    setCheck(true);
+    setEstaSelecionado(true);
     onRequestClose();
   }
 
@@ -198,10 +212,24 @@ export function NewTransactionModal({
             onChange={(event) => setValor(event.target.value)}
           ></input>
 
+          <Checkbox
+            title="duehduehdheu"
+            placeholder="mmdede"
+            style={{ padding: 0 }}
+            value={estaSelecionado}
+            checked={estaSelecionado}
+            onChange={(event) => setEstaSelecionado(event.target.checked)} />
+
+          <input
+            placeholder="Observação"
+            value={observacao}
+            onChange={(event) => setObservacao(event.target.value)}
+          ></input>
+
           <Autocomplete
             options={optionsFatura}
             onChange={(event, value) => setFaturaId(value)}
-            style={{ width: '100%', height: '100%', marginTop: '0.7rem' }}
+            style={{ width: '100%', height: '100%', marginTop: '0.3rem' }}
             renderInput={(params) =>
               <TextField {...params} label="Fatura" variant="outlined" />}
           />
@@ -211,16 +239,11 @@ export function NewTransactionModal({
             onChange={(event, value) => {
               setTipoPagamentoId(value)
             }}
-            style={{ width: '100%', height: '100%', marginTop: '0.7rem' }}
+            style={{ width: '100%', height: '100%', marginTop: '0.3rem' }}
             renderInput={(params) =>
               <TextField {...params} label="Tipo Pagamento" variant="outlined" />}
           />
 
-          <input
-            placeholder="Observação"
-            value={observacao}
-            onChange={(event) => setObservacao(event.target.value)}
-          ></input>
 
           <button type="submit">Cadastrar</button>
         </form>

@@ -36,7 +36,7 @@ export function MainRoutes() {
             </Dashboard>}>
   </Route>*/}
 
-                <Route path="/dashboard" element={<Transactions />} />
+                <Route path="/transacoes" element={<Transactions />} />
                 <Route path="/tipoPagamento" element={<TipoPagamento />} />
                 <Route path="/fatura" element={<Fatura />} />
 

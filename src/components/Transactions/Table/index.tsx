@@ -31,14 +31,32 @@ export function Table() {
 
   function setItemsByFaturaOrTipoPagamento() {
     if (activeTransaction === "fatura") {
+      IniciarHeaderChecked(transactionsByFatura);
       setItems(transactionsByFatura);
       SumTransactions(transactionsByFatura);
     }
     else {
+      IniciarHeaderChecked(transactionsByTipoPagamento);
       setItems(transactionsByTipoPagamento);
       SumTransactions(transactionsByTipoPagamento);
     }
 
+  }
+
+  function IniciarHeaderChecked(array: Transaction[]) {
+    if (array != undefined && array.length > 0) {
+      let existeTransacaoNaoSelecionada = true;
+
+      array.forEach(transacao => {
+        if (!transacao.estaSelecionado) {
+          setHeaderChecked(false);
+          existeTransacaoNaoSelecionada = false;
+          return false;
+        }
+      });
+      if (existeTransacaoNaoSelecionada)
+        setHeaderChecked(true);
+    }
   }
 
   function indexOf(valor: string) {
@@ -111,7 +129,7 @@ export function Table() {
     if (array !== undefined && array.length > 0) {
       let sumAmount: number = 0;
       array.forEach(transaction => {
-        if (transaction.check)
+        if (transaction.estaSelecionado)
           sumAmount += Number(transaction.valor);
       });
       setAmount(sumAmount);
@@ -123,7 +141,7 @@ export function Table() {
 
   function handleCheckHeader() {
     setHeaderChecked(!headerChecked);
-    items.forEach(item => item.check = !headerChecked);
+    items.forEach(item => item.estaSelecionado = !headerChecked);
     setItems(items);
     SumTransactions(items);
   }
@@ -134,9 +152,9 @@ export function Table() {
 
     items.forEach(item => {
       if (item.id === id)
-        item.check = !item.check;
+        item.estaSelecionado = !item.estaSelecionado;
 
-      if (!item.check) {
+      if (!item.estaSelecionado) {
         setHeaderChecked(false);
         counterFalse += 1;
       }
@@ -228,8 +246,8 @@ export function Table() {
                     }).format(Number(transaction.valor))}</td>
                     <td className="obs">{transaction.observacao}</td>
                     <td><Checkbox
-                      value={transaction.check}
-                      checked={transaction.check}
+                      value={transaction.estaSelecionado}
+                      checked={transaction.estaSelecionado}
                       onClick={() => hanldeCheckedItem(transaction.id)} /></td>
                     <td className="close">
                       <FiTrash2
