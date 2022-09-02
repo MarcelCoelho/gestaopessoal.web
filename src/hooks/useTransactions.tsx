@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
   createContext,
   useEffect,
@@ -5,6 +7,9 @@ import {
   ReactNode,
   useContext,
 } from "react";
+
+import Cookies from 'js-cookie';
+
 import { apiNet6 } from "../services/api";
 import { useFaturas } from "./useFaturas";
 
@@ -48,16 +53,22 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   const [activeTransaction, setActiveTransaction] = useState("fatura");
   const [errorApi, setErrorApi] = useState('');
 
+  const [usuarioId, setUsuarioId] = useState('');
   useEffect(() => {
     getTransactions();
+    console.log('useTransacao')
   }, []);
 
   async function getTransactions() {
 
     try {
-      const usuario = "marcelfillipe@hotmail.com";
 
-      const response = await apiNet6.get<Transaction[]>(`/api/transacao/PorUsuario/${usuario}`);
+      const id_usuario = Cookies.get('id_usuario');
+      if (id_usuario === undefined)
+        return;
+
+      setUsuarioId(id_usuario);
+      const response = await apiNet6.get<Transaction[]>(`/api/transacao/PorUsuario/${id_usuario}`);
       setTransactions(response.data);
       setTransactionsByFatura(response.data);
       setErrorApi('');
@@ -125,8 +136,6 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       setTransactions([]);
       setTransactions(_transactions);
 
-      console.log(_transactions);
-
       await getTransactionsById(transaction.id);
       contadorParcelas++;
     }
@@ -137,7 +146,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
     if (i > 1) {
       order += i - 1;
-      fatura = getFatura(null, order);
+      fatura = getFatura('', order);
     }
     else {
       fatura = faturaRecuperada;
@@ -153,6 +162,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     transactionPost.faturaId = fatura.id;
     transactionPost.fatura = fatura;
     transactionPost.tipoPagamento = tipoPagamento;
+    transactionPost.usuarioId = usuarioId;
   }
 
   async function GravarTransacao(transactionPost: TransactionInput) {
@@ -247,7 +257,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     setActiveTransaction("fatura");
 
     if (fatura !== null && fatura !== undefined) {
-      var array = []; // make a separate copy of the array
+      var array: Transaction[] = []; // make a separate copy of the array
 
       const dataAtual = new Date();
       array = transactions.filter(function (transaction) {
@@ -266,16 +276,16 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   }
 
   function getTransactionsByTipoPagamento(fatura: string, tipoPagamentoId: string) {
+    var transactionByFatura: Transaction[] = []; // make a separate copy of the array
 
     if (fatura !== "null" && fatura !== undefined) {
-      var transactionByFatura = []; // make a separate copy of the array
 
       transactionByFatura = transactions.filter(function (transaction) {
         return transaction.fatura.observacao === fatura;
       });
 
       if (tipoPagamentoId !== "null" && tipoPagamentoId !== undefined) {
-        var transactionByTipoPagamento = []; // make a separate copy of the array
+        var transactionByTipoPagamento: Transaction[] = []; // make a separate copy of the array
 
         transactionByTipoPagamento = transactionByFatura.filter(function (transaction) {
           return transaction.tipoPagamento.id === tipoPagamentoId;

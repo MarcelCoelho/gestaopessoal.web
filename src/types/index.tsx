@@ -44,6 +44,7 @@ export type Transaction = {
     dataFinal: Date;
   };
   tipoPagamento: {
+    id: string;
     descricao: string;
   };
   valor: string;

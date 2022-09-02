@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   createContext,
   useEffect,
@@ -38,21 +39,12 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
 
   useEffect(() => {
     getFaturas();
-  }, [updateData]);
+  }, [faturas, updateData]);
 
   async function getFaturas() {
 
     if (updateData) {
       const response = await apiNet6.get<Fatura[]>("/api/Fatura");
-
-      //let faturasTemp: Fatura[] = response.data;
-
-      /*faturasTemp.forEach(fat => {
-        fat.atual = (new Date() >= new Date(fat.dataInicio) &&
-          new Date() <= new Date(fat.dataFinal));
-      });*/
-
-      //setFaturas(faturasTemp);
       setFaturas(response.data);
       setUpdateData(false);
     }
@@ -74,21 +66,19 @@ export function FaturasProvider({ children }: FaturaProviderProps) {
   }
 
   async function putFaturaFechada(id: string, fechada: boolean) {
-    const fatura = faturas.filter(function (fat) {
+    faturas.filter(function (fat) {
       return fat.id === id;
     });
 
-    //await apiNet6.put(`/api/Fatura/${id}`, fatura);
     await apiNet6.put(`/api/Fatura/Fechada/${id}/${fechada}`);
     setUpdateData(true);
   }
 
   async function putFaturaAtual(id: string, atual: boolean) {
-    const fatura = faturas.filter(function (fat) {
+    faturas.filter(function (fat) {
       return fat.id === id;
     });
 
-    //await apiNet6.put(`/api/Fatura/${id}`, fatura);
     await apiNet6.put(`/api/Fatura/Atual/${id}/${atual}`);
     setUpdateData(true);
   }

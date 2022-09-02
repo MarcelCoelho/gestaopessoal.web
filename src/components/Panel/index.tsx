@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { useContext, useEffect, useState } from "react";
 import { format } from "date-fns";
 
@@ -55,17 +55,17 @@ type teste = {
 
 
 export function Panel() {
-  const [itemsLog, setLogs] = useState<itemLog>();
+  const [itemsLog, setLogs] = useState<itemLog | null>();
 
   const [aplicacoes, setAplicacoes] = useState([]);
   const [funcionalidades, setFuncionalidades] = useState([]);
 
-  const [aplicacion, setAplicacion] = useState("");
-  const [funcionalidade, setFuncionalidade] = useState("");
+  const [aplicacion, setAplicacion] = useState<string | null>("");
+  const [funcionalidade, setFuncionalidade] = useState<string | null>("");
   const [quantidade, setQuantidade] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [teste, setTeste] = useState<teste>();
+  //const [teste, setTeste] = useState<teste>();
 
   const {
     resetCounter } = useContext(CounterContext);
@@ -85,7 +85,7 @@ export function Panel() {
       //resetCounter();
     }
     catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
       //setLoading(false);
       //resetCounter();
     }
@@ -102,12 +102,10 @@ export function Panel() {
       };
       const response = await apiGenesisLocal.post<itemLog>("/Log", request);
       setLogs(response.data);
-      console.log(response.data);
       setLoading(false);
       resetCounter();
     }
     catch (error) {
-      console.log(error.message);
       setLoading(false);
       resetCounter();
     }
@@ -121,48 +119,29 @@ export function Panel() {
 
     let _itemsLog: itemLog;
 
-    itemsLog.logs.forEach(log => {
-      if (log.identificadorEjecucion === idEjecucion) {
-        log.detalleLogs.forEach(detalle => {
-          if (detalle.idDetalle === idDetalle) {
-            if (detalle.infoOpen)
-              detalle.infoOpen = false;
-            else
-              detalle.infoOpen = true;
-          }
-        })
-        _itemsLog = itemsLog;
-      }
-    });
-
-    return _itemsLog;
-  }
-
-  function handleTeste() {
-    let _teste: teste;
-
-    if (teste === undefined) {
-      _teste = {
-        id: "1",
-        key: "1",
-        count: 1
-      }
-    } else {
-      _teste = {
-        id: (teste.count + 1).toString(),
-        key: (teste.count + 1).toString(),
-        count: teste.count + 1
-      }
+    if (itemsLog) {
+      itemsLog.logs.forEach(log => {
+        if (log.identificadorEjecucion === idEjecucion) {
+          log.detalleLogs.forEach(detalle => {
+            if (detalle.idDetalle === idDetalle) {
+              if (detalle.infoOpen)
+                detalle.infoOpen = false;
+              else
+                detalle.infoOpen = true;
+            }
+          })
+          _itemsLog = itemsLog;
+        }
+      });
+      return _itemsLog;
     }
-    setTeste(_teste);
+    else {
+      return null;
+    }
   }
 
   return (
     <>
-      <div onClick={handleTeste}>
-        Quantidade de cliques = 
-        {" " + teste && teste.count}
-      </div>
 
       <Container>
         <Filter>

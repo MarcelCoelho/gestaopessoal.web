@@ -6,7 +6,7 @@ export function Title() {
 
   return (
     <Container>
-      <div><strong>Fatura x Valor</strong></div>
+      <div><strong>Faturas</strong></div>
     </Container>
   );
 }

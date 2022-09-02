@@ -1,3 +1,4 @@
+import React from 'react';
 import { Route, Routes, Navigate, BrowserRouter as Router } from 'react-router-dom';
 
 import { TransactionsProvider } from "..//hooks/useTransactions";
@@ -6,9 +7,11 @@ import { FaturasProvider } from "..//hooks/useFaturas";
 import { CounterProvider } from "..//hooks/useCounter";
 
 import { Panel } from "../components/Panel";
-import { Transactions } from "../components/Transactions";
-import { TipoPagamento } from "../components/TipoPagamento";
-import { Fatura } from "../components/Fatura";
+
+import { Login } from "../components/Pages/Login";
+import { Transacao } from "../components/Pages/Transacao";
+import { TipoPagamento } from "../components/Pages/TipoPagamento";
+import { Fatura } from "../components/Pages/Fatura";
 import { Charts } from "../components/Charts";
 
 const Dashboard = ({ children, redirectTo }) => {
@@ -24,19 +27,24 @@ export function MainRoutes() {
             <CounterProvider>
               <Routes>
 
-                <Route path="/panelaplicacoes" element={<Panel />} />
-                <Route path="/panelaplicacoes" element={<Panel />} />
+                {/* <Route path="/panelaplicacoes" element={<Panel />} />
                 <Route path="/" element={<Dashboard redirectTo="/panelaplicacoes">
                   <Panel />
                 </Dashboard>}>
-                </Route>
+                </Route>*/}
                 {/*<Route path="/dashboard" element={<Transactions />} />
             <Route path="/" element={<Dashboard redirectTo="/dashboard">
               <Transactions />
             </Dashboard>}>
   </Route>*/}
 
-                <Route path="/transacoes" element={<Transactions />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Dashboard redirectTo="/login">
+                  <Panel />
+                </Dashboard>}>
+                </Route>
+
+                <Route path="/transacoes" element={<Transacao />} />
                 <Route path="/tipoPagamento" element={<TipoPagamento />} />
                 <Route path="/fatura" element={<Fatura />} />
 

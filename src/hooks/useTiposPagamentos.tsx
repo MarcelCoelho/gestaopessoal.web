@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
   createContext,
   useEffect,
@@ -55,16 +57,13 @@ export function TiposPagamentosProvider({ children }: TipoPagamentoProviderProps
 
   async function createTipoPagamento(tipoPagamentoInput: TipoPagamentoInput) {
 
-    const response = await apiNet6.post("/api/TipoPagamento",
+    await apiNet6.post("/api/TipoPagamento",
       {
         ...tipoPagamentoInput,
         usuarioCriacao: 'web',
         usuarioModificacao: 'web'
       });
 
-    const { tipoPagamento } = response.data;
-
-    //setTiposPagamentos([...tiposPagamentos, tipoPagamento]);
     setUpdateData(true);
   }
 

@@ -1,11 +1,25 @@
+
+import React from 'react';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
+
 import { Profile } from './styles';
 export function Perfil() {
+
+  const [avatarUrl, setAvatarUsuario] = useState("");
+  const [nomeUsuario, setNomeUsuario] = useState("");
+
+  useEffect(() => {
+    setNomeUsuario(Cookies.get('nome_usuario'));
+    setAvatarUsuario(Cookies.get('avatar_usuario'));
+  }, [])
+
   return (
     <Profile>
-      <img src="https://avatars.githubusercontent.com/u/39440678?v=4" />
+      <img src={avatarUrl} alt={nomeUsuario} />
       <div>
         <span>Gastos</span>
-        <b>Marcel Fillipe Coelho</b>
+        <b>{nomeUsuario}</b>
       </div>
     </Profile>
   )

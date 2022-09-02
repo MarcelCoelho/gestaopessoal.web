@@ -1,7 +1,8 @@
+import React from 'react';
 import { useContext, useEffect } from 'react';
 import { CounterContext } from '../../hooks/useCounter';
 
-import { Container }  from './styles';
+import { Container } from './styles';
 
 export function Counter() {
 
