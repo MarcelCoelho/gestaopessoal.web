@@ -21,8 +21,7 @@ export const Search = styled.div`
   input:focus {
     outline: none;
     border-radius: 0.7rem;
-  }
-  
+  }  
   button {
     margin-left: -2rem;
     width: 6rem;

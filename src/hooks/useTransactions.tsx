@@ -16,7 +16,7 @@ import { useFaturas } from "./useFaturas";
 import { Transaction, Fatura, TipoPagamento } from '../types';
 import { useTiposPagamentos } from "./useTiposPagamentos";
 
-type TransactionInput = Omit<Transaction, "id" | "usuario" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
+type TransactionInput = Omit<Transaction, "usuario" | "usuarioCriacao" | "usuarioModificacao" | "dataCriacao" | "dataModificacao">;
 
 interface TransactionProviderProps {
   children: ReactNode;
@@ -119,6 +119,15 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       transactionInput.quantidadeParcelas = 1;
     }
 
+    if (transacaoEditar != null && transacaoEditar != undefined) {
+      await AtualizarTransacao(transactionInput, dateTransaction);
+    }
+    else {
+      await InserirTransacoes(transactionInput, ordem, faturaRecuperada, dateTransaction, tipoPagamento);
+    }
+  }
+
+  async function InserirTransacoes(transactionInput: TransactionInput, ordem: number, faturaRecuperada: Fatura, dateTransaction: Date, tipoPagamento: TipoPagamento) {
     let contadorParcelas = transactionInput.numeroParcela;
 
     for (let i = contadorParcelas; i <= transactionInput.quantidadeParcelas; ++i) {
@@ -171,6 +180,21 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
 
   async function GravarTransacao(transactionPost: TransactionInput) {
     const response = await apiNet6.post<Transaction>("/api/transacao",
+      {
+        ...transactionPost,
+        usuarioCriacao: 'web',
+        usuarioModificacao: 'web'
+      });
+
+    return response;
+  }
+
+  async function AtualizarTransacao(transactionPost: TransactionInput, data: Date) {
+    transactionPost.data = data;
+    transactionPost.dataTexto = transactionPost.data.toDateString();
+    transactionPost.usuarioId = usuarioId;
+
+    const response = await apiNet6.put<Transaction>(`/api/transacao/${transactionPost.id}`,
       {
         ...transactionPost,
         usuarioCriacao: 'web',
@@ -318,6 +342,7 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   }
 
   function atualizarTransacaoEditar(transacao: Transaction) {
+
     setTransacaoEditar(transacao);
   }
 
