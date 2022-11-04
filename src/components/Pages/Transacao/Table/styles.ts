@@ -21,7 +21,8 @@ export const Search = styled.div`
   input:focus {
     outline: none;
     border-radius: 0.7rem;
-  }  
+  }
+  
   button {
     margin-left: -2rem;
     width: 6rem;
@@ -82,7 +83,11 @@ export const ContentTable = styled.div`
         color: var(--text-body);
         border-radius: 0.25rem;
       }
+      .editar {
+        cursor: pointer;
+      }
       .close {
+        cursor: pointer;
         text-align: center;
         width: 4rem;
       }

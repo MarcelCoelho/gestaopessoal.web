@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useTransactions } from "../../../../hooks/useTransactions";
 
-import { FiTrash, FiTrash2 } from "react-icons/fi";
+import { FiTrash, FiTrash2, FiEdit2 } from "react-icons/fi";
 
 import { Container, Search, Barra, Total, ContentTable } from "./styles";
 import { useEffect, useState } from "react";
@@ -11,7 +11,12 @@ import { Checkbox } from "@material-ui/core";
 
 import { Transaction } from '../../../../types';
 
-export function Table() {
+interface TableProps {
+  AbrirModalTransacaoModoEdicao: (transacao: Transaction) => void;
+}
+
+export function Table({ AbrirModalTransacaoModoEdicao }: TableProps) {
+
   const {
     transactionsByFatura,
     transactionsByTipoPagamento,
@@ -175,6 +180,11 @@ export function Table() {
     SumTransactions(newItems);
   }
 
+  function handleEditarTransacao(id: string) {
+    var transacao = items.filter(t => t.id === id)[0];
+    AbrirModalTransacaoModoEdicao(transacao);
+  }
+
   function handleDeleteTransaction(id: string) {
     if (window.confirm('Tem certeza que deseja remover?')) {
       removeTransaction(id);
@@ -220,6 +230,7 @@ export function Table() {
                 <th><Checkbox
                   checked={headerChecked}
                   onClick={handleCheckHeader} /></th>
+                <th></th>
                 <th className="close">
                   <FiTrash
                     size="20"
@@ -254,6 +265,14 @@ export function Table() {
                       value={transaction.estaSelecionado}
                       checked={transaction.estaSelecionado}
                       onClick={() => hanldeCheckedItem(transaction.id)} /></td>
+                    <td className="editar">
+                      <FiEdit2
+                        size="16"
+                        onClick={() => {
+                          handleEditarTransacao(transaction.id);
+                        }}
+                      />
+                    </td>
                     <td className="close">
                       <FiTrash2
                         size="18"

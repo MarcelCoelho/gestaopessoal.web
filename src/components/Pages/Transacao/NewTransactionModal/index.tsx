@@ -18,8 +18,6 @@ import { useTiposPagamentos } from "../../../../hooks/useTiposPagamentos";
 import { useFaturas } from "../../../../hooks/useFaturas";
 import { Checkbox } from "@material-ui/core";
 
-
-
 interface NewTransactionModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
@@ -30,15 +28,21 @@ registerLocale('pt', pt);
 
 export function NewTransactionModal({
   isOpen,
-  onRequestClose,
+  onRequestClose
 }: NewTransactionModalProps) {
-  const { createTransaction } = useTransactions();
+  const { createTransaction, transacaoEditar } = useTransactions();
 
   const { tiposPagamentos } = useTiposPagamentos();
   const { faturas } = useFaturas();
 
   const [optionsTipoPagamento, setOptionsTipoPagamento] = useState<string[]>([]);
   const [optionsFatura, setOptionsFatura] = useState<string[]>([]);
+
+  useEffect(() => {
+    getOptionsTipoPagamento();
+    getOptionsFatura();
+    carregarDadosTransacao();
+  }, [transacaoEditar]);
 
   const [data, setData] = useState(new Date());
   const [produto, setProduto] = useState("");
@@ -50,13 +54,34 @@ export function NewTransactionModal({
   const [observacao, setObservacao] = useState("");
   const [estaSelecionado, setEstaSelecionado] = useState(true);
 
-  const [faturaId, setFaturaId] = useState<string | null>('');
-  const [tipoPagamentoId, setTipoPagamentoId] = useState<string | null>('');
+  const [faturaId, setFaturaId] = useState<string | null>("");
+  const [tipoPagamentoId, setTipoPagamentoId] = useState<string | null>("Crédito");
 
-  useEffect(() => {
-    getOptionsTipoPagamento();
-    getOptionsFatura();
-  }, [tiposPagamentos, faturas]);
+  function transacaoExiste() {
+    return transacaoEditar != null && transacaoEditar != undefined;
+  }
+
+  function carregarDadosTransacao() {
+    setData(transacaoExiste() ? transacaoEditar.data : new Date());
+    setProduto(transacaoExiste() ? transacaoEditar.produto : "");
+    setLoja(transacaoExiste() ? transacaoEditar.loja : "");
+    setLocal(transacaoExiste() ? transacaoEditar.local : "");
+    setNumeroParcela(transacaoExiste() ? transacaoEditar.numeroParcela : 1);
+    setQuantidadeParcelas(transacaoExiste() ? transacaoEditar.quantidadeParcelas : 1);
+    setValor(transacaoExiste() ? transacaoEditar.valor : "");
+    setObservacao(transacaoExiste() ? transacaoEditar.observacao : "");
+    setEstaSelecionado(transacaoExiste() ? transacaoEditar.estaSelecionado : true);
+    setFaturaId(transacaoExiste() ? buscarDescricaoPorFaturaId(transacaoEditar.faturaId) : buscarPrimeiraFatura());
+    setTipoPagamentoId(transacaoExiste() ? buscarDescricaoPorTipoPagamentoId(transacaoEditar.tipoPagamentoId) : "Crédito");
+  }
+
+  function buscarPrimeiraFatura() {
+    if (faturas != null && faturas != undefined && faturas.length > 0) {
+      var ft = faturas.filter(f => f.atual)[0];
+      return ft.observacao;
+    }
+    return "";
+  }
 
   function getOptionsTipoPagamento() {
     let optionsTemporary: string[] = []
@@ -76,6 +101,24 @@ export function NewTransactionModal({
     }
 
     setOptionsFatura(optionsTemporary);
+  }
+
+  function buscarDescricaoPorFaturaId(id: string) {
+    for (let i = 0; i < faturas.length; ++i) {
+      if (faturas[i].id === id) {
+        return faturas[i].observacao;
+      }
+    }
+    return "";
+  }
+
+  function buscarDescricaoPorTipoPagamentoId(id: string) {
+    for (let i = 0; i < tiposPagamentos.length; ++i) {
+      if (tiposPagamentos[i].id === id) {
+        return tiposPagamentos[i].descricao;
+      }
+    }
+    return "";
   }
 
   function getFaturaId(value: string | null) {
@@ -150,6 +193,12 @@ export function NewTransactionModal({
     onRequestClose();
   }
 
+  const handleFaturaSelecionada = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFaturaId(event.target.value);
+  };
+  const handleTipoPagamentoSelecionado = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTipoPagamentoId(event.target.value);
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -233,23 +282,41 @@ export function NewTransactionModal({
             onChange={(event) => setObservacao(event.target.value)}
           ></input>
 
-          <Autocomplete
-            options={optionsFatura}
-            onChange={(event, value) => setFaturaId(value)}
-            style={{ width: '100%', height: '100%', marginTop: '0.3rem' }}
-            renderInput={(params) =>
-              <TextField {...params} label="Fatura" variant="outlined" />}
-          />
-
-          <Autocomplete
-            options={optionsTipoPagamento}
-            onChange={(event, value) => {
-              setTipoPagamentoId(value)
+          <TextField
+            style={{ width: '100%', height: '100%', marginTop: '1rem' }}
+            id="outlined-select-currency-native"
+            select
+            label="Fatura"
+            value={faturaId}
+            onChange={handleFaturaSelecionada}
+            SelectProps={{
+              native: true,
             }}
-            style={{ width: '100%', height: '100%', marginTop: '0.3rem' }}
-            renderInput={(params) =>
-              <TextField {...params} label="Tipo Pagamento" variant="outlined" />}
-          />
+          >
+            {optionsFatura.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </TextField>
+
+          <TextField
+            style={{ width: '100%', height: '100%', marginTop: '1.5rem' }}
+            id="outlined-select-currency-native"
+            select
+            label="Tipo de Pagamento"
+            value={tipoPagamentoId}
+            onChange={handleTipoPagamentoSelecionado}
+            SelectProps={{
+              native: true,
+            }}
+          >
+            {optionsTipoPagamento.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </TextField>
 
 
           <button type="submit">Cadastrar</button>

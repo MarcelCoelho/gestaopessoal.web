@@ -36,6 +36,8 @@ interface TransactionsContextData {
   gravarTransacoesPorFatura: (transacoes: Transaction[]) => void;
   gravarTransacoesPorTipoPagamento: (transacoes: Transaction[]) => void;
   errorApi: string;
+  atualizarTransacaoEditar: (transacao: Transaction) => void;
+  transacaoEditar: Transaction;
 }
 
 const TransactionsContext = createContext<TransactionsContextData>(
@@ -43,6 +45,8 @@ const TransactionsContext = createContext<TransactionsContextData>(
 );
 
 export function TransactionsProvider({ children }: TransactionProviderProps) {
+
+  const [transacaoEditar, setTransacaoEditar] = useState<Transaction>();
 
   const { faturas } = useFaturas();
   const { tiposPagamentos } = useTiposPagamentos();
@@ -313,6 +317,10 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
     setTransactionsByTipoPagamento(transacoes);
   }
 
+  function atualizarTransacaoEditar(transacao: Transaction) {
+    setTransacaoEditar(transacao);
+  }
+
   return (
     <TransactionsContext.Provider
       value={{
@@ -327,7 +335,9 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
         getTransactionsByTipoPagamento,
         gravarTransacoesPorFatura,
         gravarTransacoesPorTipoPagamento,
-        errorApi
+        errorApi,
+        atualizarTransacaoEditar,
+        transacaoEditar
       }}
     >
       {children}

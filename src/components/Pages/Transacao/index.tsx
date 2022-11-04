@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useState } from "react";
 import { Header } from "../../_Comum/Header";
@@ -8,8 +8,19 @@ import { NewTransactionModal } from "../../../components/Pages/Transacao/NewTran
 
 import { usePrincipal } from "../../../hooks/usePrincipal";
 import { Container } from "./styles";
+import { Transaction } from '../../../types';
+import { useTransactions } from '../../../hooks/useTransactions';
 
 export function Transacao() {
+
+
+
+  const {
+    atualizarTransacaoEditar, transacaoEditar
+  } = useTransactions();
+
+  useEffect(() => {
+  }, [transacaoEditar])
 
   const {
     handleOpenChart,
@@ -20,17 +31,23 @@ export function Transacao() {
   const [isNewTransactionModalOpen, setIsNewTransactionModalOpen] = useState(false);
 
   function handleOpenNewTransactionModal() {
+    atualizarTransacaoEditar(null);
     setIsNewTransactionModalOpen(true);
   }
 
   function handleCloseNewTransactionModal() {
+    atualizarTransacaoEditar(null);
     setIsNewTransactionModalOpen(false);
+  }
+
+  function handleAbrirModalTransacaoModoEdicao(transacao: Transaction) {
+    atualizarTransacaoEditar(transacao);
+    setIsNewTransactionModalOpen(true);
   }
 
   return (
 
     <>
-      {console.log('transacao')}
       <Header
         onOpenNewTransactionModal={handleOpenNewTransactionModal}
         onOpenChart={handleOpenChart}
@@ -49,7 +66,7 @@ export function Transacao() {
       />
       <Container>
         <Summary />
-        <Table />
+        <Table AbrirModalTransacaoModoEdicao={handleAbrirModalTransacaoModoEdicao} />
       </Container>
 
       <NewTransactionModal

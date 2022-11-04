@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const Content = styled.div`
 
-  height: 40rem;
+  height: 41rem;
   font-size: 1rem;
   overflow: auto;
 

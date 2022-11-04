@@ -55,7 +55,7 @@ export function Transacao() {
             />
             <Container>
               <Summary />
-              <Table />
+              <Table AbrirModalTransacaoModoEdicao={() => { }} />
             </Container>
 
             <NewTransactionModal
