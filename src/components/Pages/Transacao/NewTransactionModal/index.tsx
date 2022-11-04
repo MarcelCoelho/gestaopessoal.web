@@ -151,7 +151,7 @@ export function NewTransactionModal({
     const newDate = new Date(data);
 
     await createTransaction({
-      id: transacaoEditar.id,
+      id: transacaoExiste() ? transacaoEditar.id : "",
       data: newDate,
       dataTexto: newDate.toDateString(),
       produto,
